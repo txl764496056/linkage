@@ -4,7 +4,6 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>
-    <div>fjdkfjk</div>
     <router-view/>
   </div>
 </template>
@@ -12,6 +11,9 @@
 <style lang="scss">
 @import './scss/base.scss';
 *{margin:0;padding:0;box-sizing:border-box;}
+button:focus{
+  outline: none;
+}
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -31,4 +33,9 @@
     }
   }
 }
+
+// 图标高亮
+  .light-red{
+      &:hover{color:$color-red-15;}
+  }
 </style>

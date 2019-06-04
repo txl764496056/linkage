@@ -1,18 +1,29 @@
 <template>
   <div class="home">
     <div class="top">
-      <select name="" id="" @change="getData()">
+      <select name="" id="" >
         <option value="1" checked>read</option>
         <option value="2">write</option>
       </select>
-      <button>add</button>
+      <button @click="addData()">add</button>
     </div>
     <div class="container">
       <div class="title">write</div>
       <div class="content scroll">
-        <data-origin v-on:send-result="getResult"></data-origin>
-        <data-origin></data-origin>
-        <data-origin></data-origin>
+        <data-origin class="do-item" 
+        v-for="item in write_list" 
+        :key="item.source_id" 
+        :source="item"
+        :feild_color="feild_color"></data-origin>
+      </div>
+    </div>
+    <div class="container">
+      <div class="title">write</div>
+      <div class="content scroll">
+        <data-origin class="do-item" 
+        v-for="item in read_list" 
+        :key="item.source_id" 
+        :source="item"></data-origin>
       </div>
     </div>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
@@ -28,22 +39,38 @@ export default {
   components: {
     dataOrigin //参数信息组件
   },
+  data(){
+    return {
+      list:[],
+      read_list:[], //可读数据
+      write_list:[], //可写数据
+      feild_color:[]
+    }
+  },
   mounted(){
-    
+    this.axios.get("/source").then(res=>{
+      let data = res.data;
+      for(let i=0;i<data.length;i++){
+        // 分离刻度可写数据
+        if(data[i].permission=='Read'){
+          this.read_list.push(data[i]);
+          this.feild_color.push(true);
+        }else{
+          this.write_list.push(data[i]);
+        }
+        
+      }
+    })
   },
   methods:{
-    getData(){
-      this.axios.get("/read_source").then(res=>{
-        console.log(res.data);
+    addData(){
+      this.axios.get("/write_source").then(res=>{
+        let source = res.data;
+        this.list.push(source);
       });
-    },
-    /**
-     * 获得已经选择的过滤器
-     */
-    getResult(aaa){
-      console.log("data",aaa);
     }
-  }
+  },
+ 
 }
 </script>
 
@@ -61,6 +88,7 @@ export default {
   }
 }
 .container{
+  margin-top:30px;
   >.title{
     $h:50px;
     height:$h;color:$color-white;background-color:$color-theme;font-size:28px;font-weight:bold;padding:0 20px;line-height:$h;
@@ -81,6 +109,9 @@ export default {
     }
     
   }
+}
+.do-item{
+  width:360px;
 }
 </style>
 
