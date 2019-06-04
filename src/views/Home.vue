@@ -11,10 +11,11 @@
       <div class="title">write</div>
       <div class="content scroll">
         <data-origin class="do-item" 
-        v-for="item in write_list" 
+        v-for="(item,index) in write_list" 
         :key="item.source_id" 
         :source="item"
-        :feild_color="feild_color"></data-origin>
+        :feild_color="feild_color"
+        :index="index"></data-origin>
       </div>
     </div>
     <div class="container">

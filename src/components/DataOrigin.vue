@@ -11,7 +11,7 @@
              class="hd-item">
                 <div class="field-list">
                     <span class="unit"  
-                    v-for="(item,index) in response" 
+                    v-for="item in response" 
                     :key="item.name"
                     :class="{'light':feild_color[index]}">{{item.name}}</span>
                 </div>
@@ -41,6 +41,10 @@ import parameterItem from './ParameterItem';
                 default:function(){
                     return [];
                 }
+            },
+            index:{
+                type:Number,
+                default:0
             }
         },
         data:function(){
