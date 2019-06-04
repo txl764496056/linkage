@@ -1,0 +1,131 @@
+{
+	"source_id": 1,
+	"source_name": "获取用户区域信息",
+	"parameter": {
+		"user_id": {
+			"name": "用户ID",
+			"null": "1",
+			"type": "Int",
+			"items": [""],
+			"range": [""],
+			"default": ""
+		},
+		"area_id": {
+			"name": "区域ID",
+			"null": "1",
+			"type": "Int",
+			"items": [""],
+			"range": [""],
+			"default": ""
+		}
+	},
+	"response": {
+		"ip": {
+			"max": 15,
+			"min": 7,
+			"name": "注册的IP",
+			"type": "string",
+			"items": [],
+			"default": ""
+		},
+		"sex": {
+			"name": "性别",
+			"null": "1",
+			"type": "Int",
+			"items": {
+				"1": "男",
+				"2": "女"
+			},
+			"range": [],
+			"default": ""
+		},
+		"name": {
+			"name": "用户名",
+			"null": "1",
+			"type": "Int",
+			"items": ["asdf"],
+			"range": ["asdf"],
+			"default": ""
+		},
+		"time": {
+			"max": 4000000000,
+			"min": 0,
+			"name": "注册时间",
+			"type": "int",
+			"items": [],
+			"default": null
+		},
+		"mobile": {
+			"name": "手机号",
+			"null": "1",
+			"type": "Int",
+			"items": ["1"],
+			"range": ["ddd"],
+			"default": ""
+		},
+		"area_id": {
+			"name": "所在区域ID",
+			"null": "1",
+			"type": "Int",
+			"items": {},
+			"range": [],
+			"default": ""
+		},
+		"user_id": {
+			"name": "用户ID",
+			"null": "1",
+			"type": "Int",
+			"items": [""],
+			"range": [""],
+			"default": ""
+		},
+		"birthday": {
+			"name": "生日",
+			"null": "1",
+			"type": "Int",
+			"items": {},
+			"range": [],
+			"default": ""
+		},
+		"agent_id_1": {
+			"max": 4000000000,
+			"min": 0,
+			"name": "上级创客id",
+			"type": "int",
+			"items": [],
+			"default": null
+		},
+		"agent_id_2": {
+			"max": 4000000000,
+			"min": 0,
+			"name": "上级联创人id",
+			"type": "int",
+			"items": [],
+			"default": null
+		},
+		"agent_id_3": {
+			"max": 4000000000,
+			"min": 0,
+			"name": "上级代理商id",
+			"type": "int",
+			"items": [],
+			"default": null
+		},
+		"recommend_code": {
+			"max": 10,
+			"min": 4,
+			"name": "推荐码",
+			"type": "string",
+			"items": [],
+			"default": ""
+		},
+		"recommend_user_id": {
+			"max": 4000000000,
+			"min": 0,
+			"name": "直接推荐人ID",
+			"type": "int",
+			"items": [],
+			"default": null
+		}
+	}
+}

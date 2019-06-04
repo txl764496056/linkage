@@ -1,0 +1,29 @@
+@charset "utf-8";
+
+/*
+* 基础色
+*  色号表示：
+*  单词-1 ，1-1
+*  单词/第一个数 表示颜色分类
+*  第二个数  表示颜色深浅，值越大，颜色越浅
+*/
+
+//主题色
+$color-theme:#42b983; 
+
+// 黄绿色系列
+$color-kelly-1:#e8f9f1;
+
+// 黑色系列
+$color-black-2:#161616;
+$color-black-4: #2c3e50;
+
+// 灰色系列
+$color-gray-15:#f4f4f4;
+$color-gray-11:#ddd; 
+$color-gray-6:#666;
+$color-gray-8:#888;
+
+// 白色
+$color-white:#fff;
+
