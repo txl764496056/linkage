@@ -1,7 +1,6 @@
 import Mock from 'mockjs';
 import axios from 'axios';
 
-// let i = 0;
 let source_id = 0;
 
 let source = {};
@@ -23,9 +22,6 @@ Mock.mock(RegExp('/write_source$'),'get',function(){
     let temp = Object.assign({},source);
     temp.permission = "Write";
     temp.source_id = ++source_id;
-    // for(let key in temp.parameter){
-    //     temp.parameter[key].id = ++i;
-    // }
     return temp;
 });
 

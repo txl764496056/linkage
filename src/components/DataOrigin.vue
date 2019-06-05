@@ -15,10 +15,11 @@
             v-if="response"
              class="hd-item">
                 <div class="field-list">
-                    <span class="unit"  
-                    v-for="item in response" 
+                    <span class="unit"
+                    v-for="(item,key,index) in response" 
                     :key="item.name"
-                    :class="{'light':feild_color[write_index]}">{{item.name}}</span>
+                    @click="feildActive(index)"  
+                    :class="{'light':feild_color[write_index],'selected':(feild_active==index)&&feild_color[write_index]}">{{item.name}}</span>
                 </div>
             </header-body>
         </div>
@@ -60,9 +61,10 @@ import parameterItem from './ParameterItem';
         },
         data:function(){
             return {
-                filter:[],
-                parameter:"",
-                response:"",
+                filter:[], //过滤器
+                parameter:"", //参数信息
+                response:"", //返回字段
+                feild_active:-1 //返回字段 被选中
             }
         },
         mounted(){
@@ -70,7 +72,9 @@ import parameterItem from './ParameterItem';
             this.response = this.source.response;
         },
         methods:{
-           
+           feildActive(index){
+               this.feild_active = index;
+           }
         },
         computed:{
            

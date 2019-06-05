@@ -45,7 +45,6 @@ export default {
   },
   data(){
     return {
-      list:[],
       read_list:[], //可读数据
       write_list:[], //可写数据
       source_type:1, //可读可写数据类型值 1：可读，2：可写
@@ -57,15 +56,10 @@ export default {
   },
   mounted(){
     this.axios.get("/source").then(res=>{
-      
       let data = res.data;
-
       for(let i=0;i<data.length;i++){
-
         this.sourceProcess(data[i]);
-        
       }
-
     })
   },
   methods:{
@@ -101,6 +95,7 @@ export default {
      * 获得的每条数据进行处理
      */
     sourceProcess(source){
+      
       //每个字段值 加序列号、关联图标状态
       this.paramFieldIndex(source.parameter);
 
