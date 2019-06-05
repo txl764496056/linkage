@@ -3,7 +3,12 @@
         <div class="dr-title iconfont icon-yidong">Data Origin</div>
         <div class="dr-container">
             <header-body :title="'Parameter Information'" class="hd-item">
-                <parameter-item class="pi-item" v-for="(item) in parameter" :key="item.name" :param="item"></parameter-item>
+                <parameter-item class="pi-item" 
+                v-for="(item) in parameter" :key="item.name" 
+                :param="item" 
+                :write_index='write_index'
+                :iconLink_state="iconLink_state" 
+                :feild_color="feild_color"></parameter-item>
             </header-body>
             <header-body 
             :title="'Return Feild'"
@@ -13,7 +18,7 @@
                     <span class="unit"  
                     v-for="item in response" 
                     :key="item.name"
-                    :class="{'light':feild_color[index]}">{{item.name}}</span>
+                    :class="{'light':feild_color[write_index]}">{{item.name}}</span>
                 </div>
             </header-body>
         </div>
@@ -42,16 +47,22 @@ import parameterItem from './ParameterItem';
                     return [];
                 }
             },
-            index:{
+            write_index:{
                 type:Number,
-                default:0
+                default:-1
+            },
+            iconLink_state:{
+                type:Array,
+                default:function(){
+                    return [];
+                }
             }
         },
         data:function(){
             return {
                 filter:[],
                 parameter:"",
-                response:""
+                response:"",
             }
         },
         mounted(){
@@ -63,6 +74,12 @@ import parameterItem from './ParameterItem';
         },
         computed:{
            
+        },
+        watch:{
+            // 颜色监控
+           feild_color:function(){
+            //    console.log(newVal,oldVal);
+           } 
         }
     }
 </script>

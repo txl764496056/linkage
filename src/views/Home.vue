@@ -15,7 +15,8 @@
         :key="item.source_id" 
         :source="item"
         :feild_color="feild_color"
-        :index="index"></data-origin>
+        :iconLink_state="iconLink_state"
+        :write_index="index"></data-origin>
       </div>
     </div>
     <div class="container">
@@ -24,6 +25,8 @@
         <data-origin class="do-item" 
         v-for="item in read_list" 
         :key="item.source_id" 
+        :feild_color="feild_color"
+        :iconLink_state="iconLink_state"
         :source="item"></data-origin>
       </div>
     </div>
@@ -45,17 +48,25 @@ export default {
       list:[],
       read_list:[], //可读数据
       write_list:[], //可写数据
-      feild_color:[]
+      iconLink_state:[], //所有手型/关联图标状态。true：显示关联图标，false：显示手型图标
+      feild_color:[] //返回字段高亮颜色判断
     }
   },
   mounted(){
     this.axios.get("/source").then(res=>{
       let data = res.data;
+      let num = 0;
       for(let i=0;i<data.length;i++){
-        // 分离刻度可写数据
+
+        for(let key in data[i].parameter){
+          this.iconLink_state.push(false); //每个字段值的关联图标状态
+          data[i].parameter[key].para_index = num++; //每个字段值加序列号，
+        }
+
+        // 分离可读可写数据
         if(data[i].permission=='Read'){
           this.read_list.push(data[i]);
-          this.feild_color.push(true);
+          this.feild_color.push(false);//返回字段状态
         }else{
           this.write_list.push(data[i]);
         }
