@@ -64,7 +64,7 @@ import parameterItem from './ParameterItem';
                 filter:[], //过滤器
                 parameter:"", //参数信息
                 response:"", //返回字段
-                feild_active:-1 //返回字段 被选中
+                feild_active:-1 //返回字段 被选中,默认没有被选中的
             }
         },
         mounted(){
@@ -82,7 +82,7 @@ import parameterItem from './ParameterItem';
         watch:{
             // 颜色监控
            feild_color:function(){
-            //    console.log(newVal,oldVal);
+            this.feild_active = -1;
            } 
         }
     }
