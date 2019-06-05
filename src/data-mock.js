@@ -33,7 +33,7 @@ Mock.mock(RegExp('/write_source$'),'get',function(){
 Mock.mock(RegExp("/source$"),'get',function(){
     let arr = [];
     let temp = {};
-    for(let i=0;i<8;i++){
+    for(let i=0;i<4;i++){
         temp = Object.assign({},source);
         
         if(i%2==1){

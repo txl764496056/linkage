@@ -107,6 +107,9 @@ import filterBox from './FilterBox';
         watch:{
             iconLink_state(){
                 this.iconLink = this.iconLink_state[this.param.para_index]
+            },
+            iconLink(){
+                
             }
         }
     }

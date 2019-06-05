@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="top">
-      <select name="" id="" >
+      <select name="" id="" v-model="source_type">
         <option value="1" checked>read</option>
         <option value="2">write</option>
       </select>
@@ -48,37 +48,77 @@ export default {
       list:[],
       read_list:[], //可读数据
       write_list:[], //可写数据
+      source_type:1, //可读可写数据类型值 1：可读，2：可写
       iconLink_state:[], //所有手型/关联图标状态。true：显示关联图标，false：显示手型图标
+      num:0, //字段值加序列号(parameter下的字段)
+      data_origin_id:0, //DataOrigin 唯一标识符，也是数量统计
       feild_color:[] //返回字段高亮颜色判断
     }
   },
   mounted(){
     this.axios.get("/source").then(res=>{
+      
       let data = res.data;
-      let num = 0;
+
       for(let i=0;i<data.length;i++){
 
-        for(let key in data[i].parameter){
-          this.iconLink_state.push(false); //每个字段值的关联图标状态
-          data[i].parameter[key].para_index = num++; //每个字段值加序列号，
-        }
-
-        // 分离可读可写数据
-        if(data[i].permission=='Read'){
-          this.read_list.push(data[i]);
-          this.feild_color.push(false);//返回字段状态
-        }else{
-          this.write_list.push(data[i]);
-        }
+        this.sourceProcess(data[i]);
         
       }
+
     })
   },
   methods:{
+    /**
+     * parameter(参数信息) 下所有字段加序列号
+     * 每个字段值的关联图标状态
+     */
+    paramFieldIndex(obj){
+      for(let key in obj){
+          this.iconLink_state.push(false); //每个字段值的关联图标状态
+          obj[key].para_index = this.num++; //每个字段值加序列号，
+        }
+    },
+    /**
+     * 每一个 data-origin 增加一个唯一标识
+     */
+    dataOriginId(obj){
+      obj['data_origin_id'] = this.data_origin_id++; //给每个加上唯一标识符
+    },
+    /**
+     * 分离可读和可写数据
+     * 可读加一个，返回字段状态数组一项
+     */
+    separateRWsource(obj){
+      if(obj.permission=='Read'){
+          this.read_list.push(obj);
+        }else{
+          this.write_list.push(obj);
+          this.feild_color.push(false);//返回字段状态，可写的才有返回字段
+        }
+    },
+    /**
+     * 获得的每条数据进行处理
+     */
+    sourceProcess(source){
+      //每个字段值 加序列号、关联图标状态
+      this.paramFieldIndex(source.parameter);
+
+      //给每个加上唯一标识符
+      this.dataOriginId(source);
+      
+      // 分离可读可写数据
+      this.separateRWsource(source);
+    },
+    /**
+     * 添加一条 可读/可写 数据
+     */
     addData(){
-      this.axios.get("/write_source").then(res=>{
-        let source = res.data;
-        this.list.push(source);
+
+      let url = (this.source_type==="2" ? "/write_source":"/read_source");
+
+      this.axios.get(url).then(res=>{
+          this.sourceProcess(res.data);
       });
     }
   },
