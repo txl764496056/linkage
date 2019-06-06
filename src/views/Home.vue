@@ -16,6 +16,7 @@
         :source="item"
         :feild_color="feild_color"
         :iconLink_state="iconLink_state"
+        :all_param_feild="all_param_feild"
         :write_index="index"></data-origin>
       </div>
     </div>
@@ -27,6 +28,7 @@
         :key="item.source_id" 
         :feild_color="feild_color"
         :iconLink_state="iconLink_state"
+        :all_param_feild="all_param_feild"
         :source="item"></data-origin>
       </div>
     </div>
@@ -49,6 +51,7 @@ export default {
       write_list:[], //可写数据
       source_type:1, //可读可写数据类型值 1：可读，2：可写
       iconLink_state:[], //所有手型/关联图标状态。true：显示关联图标，false：显示手型图标
+      all_param_feild:[],//所有参数信息，每个字段，序列号与图标状态一一对应
       num:0, //字段值加序列号(parameter下的字段)
       data_origin_id:0, //DataOrigin 唯一标识符，也是数量统计
       feild_color:[] //返回字段高亮颜色判断
@@ -71,6 +74,7 @@ export default {
       for(let key in obj){
           this.iconLink_state.push(false); //每个字段值的关联图标状态
           obj[key].para_index = this.num++; //每个字段值加序列号，
+          this.all_param_feild.push(obj[key]); //存放所有的参数信息 字段对象
         }
     },
     /**

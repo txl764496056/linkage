@@ -7,7 +7,7 @@
                 v-for="(item) in parameter" :key="item.name" 
                 :param="item" 
                 :write_index='write_index'
-                :iconLink_state="iconLink_state" 
+                :iconLink_state="iconLink_state"
                 :feild_color="feild_color"></parameter-item>
             </header-body>
             <header-body 
@@ -18,7 +18,7 @@
                     <span class="unit"
                     v-for="(item,key,index) in response" 
                     :key="item.name"
-                    @click="feildActive(index)"  
+                    @click="feildActive(index,item.name)"  
                     :class="{'light':feild_color[write_index],'selected':(feild_active==index)&&feild_color[write_index]}">{{item.name}}</span>
                 </div>
             </header-body>
@@ -57,6 +57,12 @@ import parameterItem from './ParameterItem';
                 default:function(){
                     return [];
                 }
+            },
+            all_param_feild:{
+                type:Array,
+                default:function(){
+                    return []
+                }
             }
         },
         data:function(){
@@ -72,8 +78,27 @@ import parameterItem from './ParameterItem';
             this.response = this.source.response;
         },
         methods:{
-           feildActive(index){
+            /**
+             * 返回字段选中状态
+             */
+           feildActive(index,value){
+               
+               // 非高亮状态直接返回
+               if( !this.feild_color[this.write_index] ){return;}
+                // 改变被点击元素状态
                this.feild_active = index;
+
+               //高亮关联图标的序列号==参数信息字段的序列号
+               let num = -1;
+               this.iconLink_state.filter(function(item,index){
+                  if(item){
+                      num = index;
+                      return ;
+                  }
+               });
+              //找出对应的参数信息字段对象,并添加新的属性
+               this.$set(this.all_param_feild[num],'select_origin',value);
+               this.$set(this.all_param_feild[num],'input_origin','');
            }
         },
         computed:{
@@ -83,7 +108,7 @@ import parameterItem from './ParameterItem';
             // 颜色监控
            feild_color:function(){
             this.feild_active = -1;
-           } 
+           },
         }
     }
 </script>
