@@ -33,8 +33,8 @@
                 isUnfold:false, //过滤器列表显示与隐藏
                 select_filter:[] //已选择的过滤器
             }
-        },
-        methods:{
+        }, 
+        methods:{ 
             filterListfold(){
                 this.isUnfold = false;
             },

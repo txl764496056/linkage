@@ -109,7 +109,7 @@ import parameterItem from './ParameterItem';
            feild_color:function(){
             this.feild_active = -1;
            },
-        }
+        } 
     }
 </script>
 

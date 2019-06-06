@@ -18,6 +18,7 @@
 </template>
 
 <script>
+
 import filterBox from './FilterBox';
     export default {
         name:'parameter-item',

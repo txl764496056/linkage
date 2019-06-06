@@ -78,6 +78,7 @@ export default {
         }
     },
     /**
+     * 
      * 每一个 data-origin 增加一个唯一标识
      */
     dataOriginId(obj){

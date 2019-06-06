@@ -11,7 +11,7 @@
 
 <script>
     export default {
-        name:"header-body",
+        name:"header-body", 
         props:{
             title:{
                 type:String,
