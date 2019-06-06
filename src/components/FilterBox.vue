@@ -8,8 +8,11 @@
                 @click="selectFilter(val)">{{val}}</li>
             </ul>
         </div>
-        <div class="filter-box">
-            <span v-for="val in select_filter" :key="val">{{val}}</span>
+        <div class="filter-box" v-show='select_filter.length>0'>
+            <span v-for="(val,index) in select_filter" :key="val">
+                {{val}}
+                <i @click="deletSelect(index)" class="iconfont icon-cha"></i>
+            </span>
         </div>
     </div>
 </template>
@@ -39,10 +42,17 @@
                 this.isUnfold = !this.isUnfold;
             },
             /**
+             * 删除过滤器
+             */
+            deletSelect(index){
+                this.select_filter.splice(index,1);
+            },
+            /**
              * 选择过滤器
              */
             selectFilter(val){
 
+                // 查是否已存在已选列表中
                 let flag = this.select_filter.every(function(item){
                     return item!==val;
                 })
@@ -51,8 +61,10 @@
                     this.select_filter.push(val);
                     
                 }
-                
+                // 关闭下拉列表
                 this.isUnfold = false;
+
+                this.$emit('selectFilter',{test:"过滤器传值"});
             }
         }
     }
@@ -63,7 +75,7 @@
 // 过滤器-列表容器
     $captionH:30px;
     .filter-list{
-        position:relative;margin-top:15px;width:120px;
+        position:relative;margin-top:15px;width:120px;z-index:99;
         .caption{
             background-color:$color-theme;color:$color-white;border:none;border-radius:5px;padding:0 10px;height:$captionH;line-height:$captionH;
             &::after{content:"\ebe6";font-size:12px;margin-left:3px;}
@@ -88,7 +100,13 @@
     .filter-box{
         display:flex;margin-top:10px;overflow-x:auto;padding-bottom:10px;
         span{
-            padding:4px 10px;border:1px solid $color-gray-11;list-style:none;margin:0 5px;border-radius:6px;color:$color-gray-6;
+            padding:4px 10px;border:1px solid $color-gray-11;list-style:none;margin:0 6px;border-radius:6px;color:$color-gray-6;position:relative;margin-top:8px;
+            i{
+                position:absolute;right:-8px;top:-8px;width:20px;height:20px;border-radius:50%;color:$color-theme;background-color:$color-kelly-1;font-size:12px;text-align:center;line-height:20px;
+                &:hover{
+                    background-color:$color-theme;color:$color-white;
+                }
+            }
         }
     }
 </style>
