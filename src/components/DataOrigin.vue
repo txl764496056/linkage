@@ -3,7 +3,7 @@
         <div class="dr-title">
             <i class="iconfont icon-yidong move"></i>
             Data origin
-            <i @click="removeOrigin()" class="iconfont icon-remove remove"></i>
+            <i @click="deleteOrigin()" class="iconfont icon-remove remove"></i>
         </div>
         <div class="dr-container">
             <header-body :title="'Parameter Information'" class="hd-item">
@@ -89,9 +89,10 @@ import parameterItem from './ParameterItem';
             /**
              * 删除当前data-origin
              */
-            removeOrigin(){
-                // let list = [];
-
+            deleteOrigin(){
+                this.$emit("deleteOrigin",{
+                    data_origin_id:this.source.data_origin_id
+                })                
             },
             /**
              * 子组件点击切换手型/关联图标时，查找并显示 高亮字段

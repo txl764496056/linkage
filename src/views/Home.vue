@@ -17,11 +17,12 @@
         :feild_color="feild_color"
         :iconLink_state="iconLink_state"
         :all_param_feild="all_param_feild"
-        :write_index="index"></data-origin>
+        :write_index="index"
+        v-on:deleteOrigin="deleteOrigin"></data-origin>
       </div>
     </div>
     <div class="container">
-      <div class="title">write</div>
+      <div class="title">read</div>
       <div class="content scroll">
         <data-origin class="do-item" 
         v-for="item in read_list" 
@@ -29,7 +30,8 @@
         :feild_color="feild_color"
         :iconLink_state="iconLink_state"
         :all_param_feild="all_param_feild"
-        :source="item"></data-origin>
+        :source="item"
+        v-on:deleteOrigin="deleteOrigin"></data-origin>
       </div>
     </div>
     <button class="submit" @click="submit()">提交</button>
@@ -67,6 +69,25 @@ export default {
     })
   },
   methods:{
+    /**
+     * 删除data-origin
+     */
+    deleteOrigin(data){
+      let id = data.data_origin_id;
+      this.deleteOriginItem(this.write_list,id);
+      this.deleteOriginItem(this.read_list,id);
+    },
+    /**
+     * 删除可读或可写 某一个
+     */
+    deleteOriginItem(arr,id){
+      for(let i=0;i<arr.length;i++){
+        if(arr[i].data_origin_id==id){
+          arr.splice(i,1);
+          break;
+        }
+      }
+    },
     /**
      * parameter(参数信息) 下所有字段加序列号
      * 每个字段值的关联图标状态
