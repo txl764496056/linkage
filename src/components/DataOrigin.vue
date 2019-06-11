@@ -1,6 +1,10 @@
 <template>
     <div class="dr-item">
-        <div class="dr-title iconfont icon-yidong">Data Origin</div>
+        <div class="dr-title">
+            <i class="iconfont icon-yidong move"></i>
+            Data origin
+            <i @click="removeOrigin()" class="iconfont icon-remove remove"></i>
+        </div>
         <div class="dr-container">
             <header-body :title="'Parameter Information'" class="hd-item">
                 <parameter-item class="pi-item" 
@@ -8,18 +12,23 @@
                 :param="item" 
                 :write_index='write_index'
                 :iconLink_state="iconLink_state"
+                v-on:changeFeildLight="changeFeildLight"
                 :feild_color="feild_color"></parameter-item>
             </header-body>
             <header-body 
             :title="'Return Feild'"
             v-if="response"
              class="hd-item">
+             <!-- 返回字段选中状态满足条件，
+             1、返回字段是高亮 2、返回字段name=当前关联对象数据源 保存的name 
+             3、返回字段所在data-origin序列号=当前关联对象数据源 保存的data-origin序列号 -->
                 <div class="field-list">
                     <span class="unit"
                     v-for="(item,key,index) in response" 
                     :key="item.name"
                     @click="feildActive(index,item.name)"  
-                    :class="{'light':feild_color[write_index],'selected':(feild_active==index)&&feild_color[write_index]}">{{item.name}}</span>
+                    :class="{'light':feild_color[write_index],
+                    'selected':(feild_active.name==item.name)&&(feild_active.upper_level==source.data_origin_id)&&feild_color[write_index]}">{{item.name}}</span>
                 </div>
             </header-body>
         </div>
@@ -70,7 +79,6 @@ import parameterItem from './ParameterItem';
                 filter:[], //过滤器
                 parameter:"", //参数信息
                 response:"", //返回字段
-                feild_active:-1 //返回字段 被选中,默认没有被选中的
             }
         },
         mounted(){
@@ -79,16 +87,53 @@ import parameterItem from './ParameterItem';
         },
         methods:{
             /**
+             * 删除当前data-origin
+             */
+            removeOrigin(){
+                // let list = [];
+
+            },
+            /**
+             * 子组件点击切换手型/关联图标时，查找并显示 高亮字段
+             */
+            changeFeildLight(){
+                let index = this.iconLinkLightIndex();
+                let upper_level = this.all_param_feild[index].upper_level;
+                let name = this.all_param_feild[index].select_origin;
+                this.setFeildLight(name,upper_level);
+            },
+            /**
+             * 设置 高亮返回字段
+             */
+            setFeildLight(name,upper_level){
+                this.$store.commit('setFeildActive', {
+                    name:name || "",
+                    upper_level:(upper_level<0 ? -1:upper_level)
+                });
+            },
+            /**
              * 返回字段选中状态
              */
            feildActive(index,value){
                
                // 非高亮状态直接返回
                if( !this.feild_color[this.write_index] ){return;}
-                // 改变被点击元素状态
-               this.feild_active = index;
 
-               //高亮关联图标的序列号==参数信息字段的序列号
+               let num = this.iconLinkLightIndex(); 
+
+               this.setFeildLight(value,this.source.data_origin_id);
+
+               //找出对应的参数信息字段对象,并添加新的属性
+               this.$set(this.all_param_feild[num],'select_origin',value);
+               //选中字段所在组件的序列号    
+               this.$set(this.all_param_feild[num],'upper_level',this.source.data_origin_id);
+               this.$set(this.all_param_feild[num],'input_origin','');
+           },
+           /**
+            * 高亮“关联”图标在iconLink_state中的序列号
+            * >高亮“关联”图标的序列号==参数信息字段的序列号
+            */
+           iconLinkLightIndex(){
                let num = -1;
                this.iconLink_state.filter(function(item,index){
                   if(item){
@@ -96,19 +141,19 @@ import parameterItem from './ParameterItem';
                       return ;
                   }
                });
-              //找出对应的参数信息字段对象,并添加新的属性
-               this.$set(this.all_param_feild[num],'select_origin',value);
-               this.$set(this.all_param_feild[num],'input_origin','');
+               return num;
            }
         },
         computed:{
-           
+           feild_active(){
+               return this.$store.state.feild_active;
+           }
         },
         watch:{
             // 颜色监控
            feild_color:function(){
-            this.feild_active = -1;
-           },
+            // this.feild_active = -1;
+           }
         } 
     }
 </script>
@@ -119,14 +164,10 @@ import parameterItem from './ParameterItem';
     $h:40px;
     height:$h;line-height:$h;
     background-color:$color-theme;
-    padding:0 10px;
     display:flex;justify-content: space-between;font-size:20px;
     color:$color-white;
-    &::after{
-    content:"\e61d";
-    }
-    &::after,&::before{
-        color:$color-kelly-1;
+    .move,.remove{
+        color:$color-kelly-1;font-size:20px; padding:0 10px;
     }
 }
 .dr-container{
@@ -143,7 +184,7 @@ import parameterItem from './ParameterItem';
             &.light,&.selected{
                 border-color:$color-theme;
             }
-            &.selected{
+            &.selected,&:hover{
                 background-color:$color-theme;color:$color-white;
             }
         }

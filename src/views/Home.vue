@@ -32,6 +32,7 @@
         :source="item"></data-origin>
       </div>
     </div>
+    <button class="submit" @click="submit()">提交</button>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
   </div>
@@ -53,7 +54,7 @@ export default {
       iconLink_state:[], //所有手型/关联图标状态。true：显示关联图标，false：显示手型图标
       all_param_feild:[],//所有参数信息，每个字段，序列号与图标状态一一对应
       num:0, //字段值加序列号(parameter下的字段)
-      data_origin_id:0, //DataOrigin 唯一标识符，也是数量统计
+      data_origin_id:0, //DataOrigin 唯一标识符，也是数量统计，每次页面刷新则重新排序
       feild_color:[] //返回字段高亮颜色判断
     }
   },
@@ -120,9 +121,90 @@ export default {
       this.axios.get(url).then(res=>{
           this.sourceProcess(res.data);
       });
+    },
+    /**
+     * 统计结果
+     * input_origin 用户输入的数据源
+     * select_origin 用户选择的数据源
+     * select_filter 用户选择的过滤器
+     * upper_level 用户选中数据源字段所在组件（data-origin)的序列号
+     * input_origin 与 select_origin 只能需要一个有值
+     * 数据格式：
+     * 1）用户输入：{
+     *      object_id:"", //当前组件data-origin的序列号（唯一标识）
+     *      source_id:"",
+     *      key:input_origin
+     *   } 
+     * key:input_origin  字段：用户输入的数据源,如：area_id:"gender"
+     * 2）用户选择：{
+     *      object_id:"", //当前组件data-origin的序列号（唯一标识）
+     *      source_id:"",
+     *      parameters:{
+     *        key:{
+     *          bind:"1",  //这个值不变，每个对象的bind都是1
+     *          value:"2.gender|filter-1|filter-2"
+     *        }
+     *      }
+     *   } 
+     *   key：字段 value:"返回字段值所在组件data-origin的序列号.返回字段值|过滤器1|过滤器2"
+     */
+    statisticResult(){
+      let result = [];
+      let list = [];
+      list.push(...this.write_list);
+      list.push(...this.read_list);
+
+      list.map(function(item){
+
+        let temp = {};
+        temp.object_id = item.data_origin_id;
+        temp.source_id = item.source_id;
+        temp.parameters = {};
+
+        for(let key in item.parameter){
+
+            let obj = item.parameter[key];
+            temp.parameters[key] = {};
+
+            //  用户输入数据源存在且不为空
+            if( obj.input_origin && obj.input_origin!='' ){
+                temp.parameters[key] = obj.input_origin;
+
+              // 用户选择数据源和过滤器
+            }else if( obj.select_origin && obj.select_origin!='' ){
+              
+              let filter = "";
+              if(obj.select_filter && obj.select_filter.length>0){
+                filter += "|";
+                filter += obj.select_filter.reduce(function(prev,cur){
+                  return prev+"|"+cur;
+                });
+              }
+              temp.parameters[key] = {
+                bind:"1",
+                value:obj.upper_level+"."+obj.select_origin+filter
+              }
+            }else{
+              temp.parameters[key] = "";
+            }
+
+        } //end-for
+        
+        if(temp){
+          result.push(temp);
+        }
+
+      }); //end-map
+      console.log(result)
+    },
+    /**
+     * 提交答案
+     */
+    submit(){
+      this.statisticResult();
     }
   },
- 
+  
 }
 </script>
 
@@ -164,6 +246,10 @@ export default {
 }
 .do-item{
   width:360px;
+}
+
+.submit{
+  background-color:$color-theme;border:none;color:#fff;font-size:20px;display:block;margin:50px auto;padding:8px 20px;border-radius:5px;min-width:120px;letter-spacing: 1px;
 }
 </style>
 

@@ -11,7 +11,7 @@
         <div class="link-msg" v-show="showLinkMsg">
             <p class="reg-msg">origin / user registration information:</p>
             <p class="origin-txt">{{ param.select_origin || "please select"}}</p>
-            <filter-box v-on:selectFilter="selectFilter()"></filter-box>
+            <filter-box ref="filterbox" v-on:selectFilter="selectFilter"></filter-box>
             <i @click="linkMsg()" class="iconfont light-red unlink icon-lianjie-duankai"></i>
         </div>
     </div>
@@ -62,10 +62,12 @@ import filterBox from './FilterBox';
         },
         methods:{
             /**
-             * 已选择过滤器
+             * 已选择过滤器，当过滤器列表项选中并点击时，生效
              */
             selectFilter(data){
-                console.log(data);
+                
+                this.emptyInputOrigin();
+                this.$set(this.param,'select_filter',data);
             },
             /**
              * 取消 所有 返回字段高亮
@@ -119,6 +121,7 @@ import filterBox from './FilterBox';
                 if(this.iconLink){
                     this.setFeildLight();
                     this.showLinkMsg = true;//显示origin关联板块
+                    this.$emit('changeFeildLight');
                 // 手型-切换后
                 }else{
                     this.cancelFeildLight();
@@ -130,7 +133,7 @@ import filterBox from './FilterBox';
             inputOrigin(){
                 if(this.param.input_origin!=''){
                     this.$set(this.param,'input_origin',this.param.input_origin);
-                    this.$set(this.param,'select_origin','');
+                    this.emptySelectOrigin();
                 }
             },
             /**
@@ -140,11 +143,31 @@ import filterBox from './FilterBox';
              * 取消 所有 返回字段 高亮
              */
             linkMsg(){
-                this.$set(this.param,'select_origin','');
+                this.emptySelectOrigin();
+                this.emptySelectFilter();
+                this.$refs.filterbox.emptySelectFilter();
                 this.iconLink = false;
                 this.showLinkMsg = false;
 
                 this.cancelFeildLight();
+            },
+            /**
+             * 清空已选择过滤器
+             */
+            emptySelectFilter(){
+                this.$set(this.param,'select_filter','');
+            },
+            /**
+             * 清空已选择数据源
+             */
+            emptySelectOrigin(){
+                this.$set(this.param,'select_origin','');
+            },
+            /**
+             * 清空已输入数据源
+             */
+            emptyInputOrigin(){
+                this.$set(this.param,'input_origin','');
             }
         },
         computed: {
@@ -159,6 +182,8 @@ import filterBox from './FilterBox';
         watch:{
             iconLink_state(){
                 this.iconLink = this.iconLink_state[this.param.para_index];
+                // this.setFeildLight(); 
+
             }
         }
     }

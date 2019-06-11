@@ -64,7 +64,15 @@
                 // 关闭下拉列表
                 this.isUnfold = false;
 
-                this.$emit('selectFilter',{test:"过滤器传值"});
+                // 将选择的过滤器给父组件
+                this.$emit('selectFilter',this.select_filter);
+            },
+            /**
+             * 清空已选择过滤器
+             */
+            emptySelectFilter(){
+                this.select_filter.splice(0,this.select_filter.length);
+                this.$emit('selectFilter',this.select_filter);
             }
         }
     }

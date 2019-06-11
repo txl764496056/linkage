@@ -2,7 +2,7 @@
 	"source_name": "获取用户区域信息",
 	"parameter": {
 		"user_id": {
-			"name": "用户ID",
+			"name": "user ID",
 			"null": "1",
 			"type": "Int",
 			"items": [""],
@@ -10,7 +10,7 @@
 			"default": ""
 		},
 		"area_id": {
-			"name": "区域ID",
+			"name": "area ID",
 			"null": "1",
 			"type": "Int",
 			"items": [""],
@@ -22,13 +22,13 @@
 		"ip": {
 			"max": 15,
 			"min": 7,
-			"name": "注册的IP",
+			"name": "register IP",
 			"type": "string",
 			"items": [],
 			"default": ""
 		},
 		"sex": {
-			"name": "性别",
+			"name": "gender",
 			"null": "1",
 			"type": "Int",
 			"items": {
@@ -39,7 +39,7 @@
 			"default": ""
 		},
 		"name": {
-			"name": "用户名",
+			"name": "username",
 			"null": "1",
 			"type": "Int",
 			"items": ["asdf"],
@@ -49,13 +49,13 @@
 		"time": {
 			"max": 4000000000,
 			"min": 0,
-			"name": "注册时间",
+			"name": "register time",
 			"type": "int",
 			"items": [],
 			"default": null
 		},
 		"mobile": {
-			"name": "手机号",
+			"name": "phone number",
 			"null": "1",
 			"type": "Int",
 			"items": ["1"],
@@ -63,7 +63,7 @@
 			"default": ""
 		},
 		"area_id": {
-			"name": "所在区域ID",
+			"name": "your area ID",
 			"null": "1",
 			"type": "Int",
 			"items": {},
@@ -71,7 +71,7 @@
 			"default": ""
 		},
 		"user_id": {
-			"name": "用户ID",
+			"name": "user ID",
 			"null": "1",
 			"type": "Int",
 			"items": [""],
@@ -79,7 +79,7 @@
 			"default": ""
 		},
 		"birthday": {
-			"name": "生日",
+			"name": "birthday",
 			"null": "1",
 			"type": "Int",
 			"items": {},
@@ -89,7 +89,7 @@
 		"agent_id_1": {
 			"max": 4000000000,
 			"min": 0,
-			"name": "上级创客id",
+			"name": "upper level Marker id",
 			"type": "int",
 			"items": [],
 			"default": null
@@ -97,7 +97,7 @@
 		"agent_id_2": {
 			"max": 4000000000,
 			"min": 0,
-			"name": "上级联创人id",
+			"name": "upper level joint creation id",
 			"type": "int",
 			"items": [],
 			"default": null
@@ -105,7 +105,7 @@
 		"agent_id_3": {
 			"max": 4000000000,
 			"min": 0,
-			"name": "上级代理商id",
+			"name": "upper level agent id",
 			"type": "int",
 			"items": [],
 			"default": null
@@ -113,7 +113,7 @@
 		"recommend_code": {
 			"max": 10,
 			"min": 4,
-			"name": "推荐码",
+			"name": "recommend code",
 			"type": "string",
 			"items": [],
 			"default": ""
@@ -121,7 +121,7 @@
 		"recommend_user_id": {
 			"max": 4000000000,
 			"min": 0,
-			"name": "直接推荐人ID",
+			"name": "direct referrer ID",
 			"type": "int",
 			"items": [],
 			"default": null
