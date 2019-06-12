@@ -11,6 +11,11 @@
 <style lang="scss">
 @import './scss/base.scss';
 *{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  padding-bottom:50px;
+}
+
 button:focus{
   outline: none;
 }

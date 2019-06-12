@@ -7,9 +7,9 @@
       </select>
       <button @click="addData()">add</button>
     </div>
-    <div class="container">
+    <div class="container" ref="writeCon">
       <div class="title">write</div>
-      <div class="content scroll">
+      <div ref="writeScon" class="content scroll">
         <data-origin class="do-item" 
         v-for="(item,index) in write_list" 
         :key="item.source_id" 
@@ -18,6 +18,7 @@
         :iconLink_state="iconLink_state"
         :all_param_feild="all_param_feild"
         :write_index="index"
+        v-on:moveOrigin="moveOrigin"
         v-on:deleteOrigin="deleteOrigin"></data-origin>
       </div>
     </div>
@@ -31,10 +32,22 @@
         :iconLink_state="iconLink_state"
         :all_param_feild="all_param_feild"
         :source="item"
+        v-on:moveOrigin="moveOrigin"
         v-on:deleteOrigin="deleteOrigin"></data-origin>
       </div>
     </div>
     <button class="submit" @click="submit()">提交</button>
+    <!-- 移动元素 start -->
+    <!-- <div class="move-data-origin"> -->
+      <data-origin 
+        ref="moveDataOrigin" 
+        class="do-item move-data-origin"
+        :style="{left:moveS_x+'px',top:moveS_y+'px'}"
+        v-for="(item) in moveSource" 
+        :key="item.name"
+        :source="item"></data-origin>
+    <!-- </div> -->
+    <!-- 移动元素 end -->
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
   </div>
@@ -57,7 +70,22 @@ export default {
       all_param_feild:[],//所有参数信息，每个字段，序列号与图标状态一一对应
       num:0, //字段值加序列号(parameter下的字段)
       data_origin_id:0, //DataOrigin 唯一标识符，也是数量统计，每次页面刷新则重新排序
-      feild_color:[] //返回字段高亮颜色判断
+      feild_color:[] ,//返回字段高亮颜色判断
+      moveSource:[], //移动data-origin数据
+      
+      moveS_x:0, // 可移动data-origin top值
+      moveS_y:0, //可移动data-origin left值
+      // 可移动data-origin 最小坐标点  
+      moveS_ymin:0,
+      moveS_xmin:0,
+      // 可移动data-origin 最大坐标点
+      moveS_ymax:0,
+      moveS_xmax:0,
+
+      distance:0 ,//滚动条滚动距离
+      scrollIntervalId:-1, // 滚动动画计时器id
+      scrollx_max:0 //横向滚动的最大距离
+
     }
   },
   mounted(){
@@ -66,9 +94,95 @@ export default {
       for(let i=0;i<data.length;i++){
         this.sourceProcess(data[i]);
       }
-    })
+    });  
   },
   methods:{
+    /**
+     * 容器滚动
+     * direction  滚动方向   right:向右， left:向左
+     */
+    scrollX(direction){
+      let _this = this;
+      let step = 30,time = 100;
+      if(direction=="left"){
+        step = -step;
+      }
+            
+      this.scrollIntervalId = setInterval(function(){
+        _this.distance += step;
+        if( _this.distance>_this.scrollx_max || _this.distance<0 ){
+          clearInterval(_this.scrollIntervalId);
+          _this.scrollIntervalId = -1;
+        }
+        console.log("ddd");
+        _this.$refs.writeScon.scrollLeft = _this.distance; 
+      },time);
+    },
+    moveXY(evt){
+      
+      let x = evt.clientX;
+      let y = evt.clientY;
+
+      if(x<this.moveS_xmin){
+        x = this.moveS_xmin;
+        if(this.scrollIntervalId<0){ this.scrollX('left'); }
+      }else if( x>this.moveS_xmax ){
+        x = this.moveS_xmax;
+        if( this.scrollIntervalId<0 && this.distance<this.scrollx_max ){ 
+          this.scrollX('right');
+         }
+      }
+
+      if(y<this.moveS_ymin){
+        y = this.moveS_ymin;
+      }else if( y>this.moveS_ymax ){
+        y = this.moveS_ymax;
+      }
+
+      this.moveS_x = x;
+      this.moveS_y = y;
+
+    },
+    /**
+     * 移动data-origin
+     */
+    moveOrigin(data){
+      let _this = this;
+
+      let id = data.id;
+      let list = [];
+      list.push(...this.write_list);
+      list.push(...this.read_list);
+      // 获取对应数据，渲染可移动data-origin
+      for(let i=0;i<list.length;i++){
+        if(list[i].data_origin_id==id){
+          this.moveSource.push(list[i]);
+          break;
+        }
+      }
+      // 初始化坐标值
+      this.moveS_x = data.x;
+      this.moveS_y = data.y;
+
+      // 坐标是值极点
+      let c_width = this.$refs.writeCon.clientWidth || this.$refs.writeCon.offestWidth;
+      let c_height = this.$refs.writeCon.clientHeight || this.$refs.writeCon.offestHeight;
+      this.moveS_ymin = data.y_min;
+      this.moveS_xmin = data.x_min;
+      this.moveS_ymax = data.y_min + c_height - data.itemH;
+      this.moveS_xmax = data.x_min + c_width - data.itemW;
+
+      // 获得横向滚动最大距离
+      this.scrollx_max = this.$refs.writeScon.clientWidth || this.$refs.writeScon.offestWidth;
+
+      // 绑定鼠标移动事件
+      document.addEventListener("mousemove",_this.moveXY);
+      // 鼠标按下，移除绑定的移动事件
+      document.addEventListener("mousedown",function(){
+          document.removeEventListener("mousemove",_this.moveXY);
+          _this.posAbs = -1;
+      });
+    },
     /**
      * 删除data-origin
      */
@@ -216,7 +330,6 @@ export default {
         }
 
       }); //end-map
-      console.log(result)
     },
     /**
      * 提交答案
@@ -225,7 +338,6 @@ export default {
       this.statisticResult();
     }
   },
-  
 }
 </script>
 
@@ -249,14 +361,14 @@ export default {
     height:$h;color:$color-white;background-color:$color-theme;font-size:28px;font-weight:bold;padding:0 20px;line-height:$h;
   }
   .content{
-    padding:20px 10px;
+    padding:20px 10px;position:relative;
     /* 属性嵌套 */
     border: 1px solid $color-theme {
       top:none;
     };
 
     &.scroll{
-      display:flex;overflow-x:scroll;
+      display:flex;overflow-x:auto;
       .dr-item{
         flex-shrink:0;
         margin:10px;
@@ -271,6 +383,10 @@ export default {
 
 .submit{
   background-color:$color-theme;border:none;color:#fff;font-size:20px;display:block;margin:50px auto;padding:8px 20px;border-radius:5px;min-width:120px;letter-spacing: 1px;
+}
+
+.move-data-origin{
+  position:fixed;z-index:999;opacity:0.5;
 }
 </style>
 

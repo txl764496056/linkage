@@ -1,12 +1,14 @@
 <template>
-    <div class="dr-item">
+    <div class="dr-item"
+    ref="itemBox" 
+    :class="{opacity:opacity==source.data_origin_id}">
         <div class="dr-title">
-            <i class="iconfont icon-yidong move"></i>
+            <i @click="absOrigin" class="iconfont icon-yidong move"></i>
             Data origin
             <i @click="deleteOrigin()" class="iconfont icon-remove remove"></i>
         </div>
         <div class="dr-container">
-            <header-body :title="'Parameter Information'" class="hd-item">
+            <header-body v-if="parameter" :title="'Parameter Information'" class="hd-item">
                 <parameter-item class="pi-item" 
                 v-for="(item) in parameter" :key="item.name" 
                 :param="item" 
@@ -79,6 +81,9 @@ import parameterItem from './ParameterItem';
                 filter:[], //过滤器
                 parameter:"", //参数信息
                 response:"", //返回字段
+                opacity:-1, //data-origin定位
+                // posAbs_x:0, //data-origin:x轴值
+                // posAbs_y:0, //data-origin:y轴值
             }
         },
         mounted(){
@@ -86,6 +91,49 @@ import parameterItem from './ParameterItem';
             this.response = this.source.response;
         },
         methods:{
+            // moveXY(evt){
+            //     this.posAbs_x = evt.clientX;
+            //     this.posAbs_y = evt.clientY;
+            // },
+            // moveOrigin(){
+            //     let _this = this;
+                
+            //     document.addEventListener("mousemove",_this.moveXY);
+
+            //     document.addEventListener("mousedown",function(){
+            //         document.removeEventListener("mousemove",_this.moveXY);
+            //         _this.posAbs = -1;
+            //     });
+            // },
+            /**
+             * 改变data-origin定位
+             */
+            absOrigin(evt){
+                
+                this.opacity = this.source.data_origin_id;
+
+                // 触发的坐标点
+                let x = evt.clientX;
+                let y = evt.clientY;
+
+                // 组件的宽和高
+                let itemH = this.$refs.itemBox.clientHeight || this.$refs.itemBox.offsetHeight;
+                let itemW = this.$refs.itemBox.clientWidth || this.$refs.itemBox.offsetWidth;
+                
+                // 坐标值 最小点  范围
+                let x_min = x - this.$refs.itemBox.offsetLeft;
+                let y_min = y - this.$refs.itemBox.offsetTop;
+
+                this.$emit("moveOrigin",{
+                    id:this.source.data_origin_id,
+                    x,
+                    y,
+                    x_min,
+                    y_min,
+                    itemH,
+                    itemW
+                });
+            },
             /**
              * 删除当前data-origin
              */
@@ -161,6 +209,9 @@ import parameterItem from './ParameterItem';
 
 <style lang="scss" scoped>
 @import "@/scss/base.scss";
+.opacity{
+    opacity:0.5;
+}
 .dr-title{
     $h:40px;
     height:$h;line-height:$h;
@@ -185,8 +236,8 @@ import parameterItem from './ParameterItem';
             &.light,&.selected{
                 border-color:$color-theme;
             }
-            &.selected,&:hover{
-                background-color:$color-theme;color:$color-white;
+            &.selected{
+               color:$color-white;
             }
         }
     }
