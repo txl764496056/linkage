@@ -113,9 +113,11 @@ import parameterItem from './ParameterItem';
                 // 坐标值 最小点  范围
                 let x_min = x - this.$refs.itemBox.offsetLeft;
                 let y_min = y - this.$refs.itemBox.offsetTop;
+                let index = this.write_index;
 
                 this.$emit("moveOrigin",{
                     id:this.source.data_origin_id,
+                    index,
                     x,
                     y,
                     x_min,

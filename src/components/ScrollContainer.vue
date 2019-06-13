@@ -4,6 +4,7 @@
         <div ref="writeScon" class="content scroll">
             <!-- <template  v-if="title=='write'"> -->
                 <data-origin class="do-item" 
+                :ref="'originItem'+index"
                 v-for="(item,index) in source_list" 
                 :key="item.source_id" 
                 :source="item"
@@ -79,7 +80,6 @@ import dataOrigin from '../components/DataOrigin'
         },
         data:function(){
             return {
-                // opacity:-1,
                 moveSource:[], //移动data-origin数据
                 moveDis:false, //移动data-origin true:隐藏 ,false:显示
 
@@ -162,6 +162,8 @@ import dataOrigin from '../components/DataOrigin'
             moveOrigin(data){
                 let _this = this;
 
+                this.moveDis = false;
+
                 let id = data.id;
                 let list = this.source_list;
                 // 获取对应数据，渲染可移动data-origin
@@ -194,6 +196,8 @@ import dataOrigin from '../components/DataOrigin'
                 document.addEventListener("mousedown",function(){
                     document.removeEventListener("mousemove",_this.moveXY);
                     _this.moveDis = true;
+                    _this.moveSource.splice(0,_this.moveSource.length);//清空数组，否则会每点一次多一个数据
+                    _this.$refs[('originItem'+data.index)][0].changeOpacity();
                 });
             },
             /**
