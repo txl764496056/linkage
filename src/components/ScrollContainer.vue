@@ -2,7 +2,7 @@
     <div class="container" ref="writeCon">
         <div class="title">{{title}}</div>
         <div ref="writeScon" class="content scroll">
-            <template  v-if="title=='write'">
+            <!-- <template  v-if="title=='write'"> -->
                 <data-origin class="do-item" 
                 v-for="(item,index) in source_list" 
                 :key="item.source_id" 
@@ -10,12 +10,12 @@
                 :feild_color="feild_color"
                 :iconLink_state="iconLink_state"
                 :all_param_feild="all_param_feild"
-                :write_index="index"
+                :write_index="getIndex(index)"
                 v-on:moveOrigin="moveOrigin"
                 v-on:deleteOrigin="deleteOrigin"></data-origin>
-            </template>
+            <!-- </template> -->
             
-            <template v-else>
+            <!-- <template v-else>
                 <data-origin class="do-item" 
                 v-for="item in source_list" 
                 :key="item.source_id" 
@@ -25,7 +25,7 @@
                 :all_param_feild="all_param_feild"
                 v-on:moveOrigin="moveOrigin"
                 v-on:deleteOrigin="deleteOrigin"></data-origin>
-            </template>
+            </template> -->
         </div>
         <!-- 移动元素 start -->
         <data-origin 
@@ -79,7 +79,7 @@ import dataOrigin from '../components/DataOrigin'
         },
         data:function(){
             return {
-                opacity:-1,
+                // opacity:-1,
                 moveSource:[], //移动data-origin数据
                 moveDis:false, //移动data-origin true:隐藏 ,false:显示
 
@@ -210,6 +210,9 @@ import dataOrigin from '../components/DataOrigin'
                     }
                 }
             },
+            getIndex(index){
+                return this.title=='write' ? index : -1;
+            }
         }
     }
 </script>
