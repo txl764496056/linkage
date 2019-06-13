@@ -100,9 +100,13 @@ export default {
     /**
      * 容器滚动
      * direction  滚动方向   right:向右， left:向左
+     * step 每次滚动距离
+     * scrollLeft  滚动容器向左滚动的真实距离，不是滚动条的滚动距离
+     * 停止滚动条件：1、滚动距离达到临界值，2、鼠标滑入至滚动容器中间区域
      */
     scrollX(direction){
       let _this = this;
+
       let step = 30,time = 100;
       if(direction=="left"){
         step = -step;
@@ -110,11 +114,11 @@ export default {
             
       this.scrollIntervalId = setInterval(function(){
         _this.distance += step;
+        // 停止滚动
         if( _this.distance>_this.scrollx_max || _this.distance<0 ){
           clearInterval(_this.scrollIntervalId);
           _this.scrollIntervalId = -1;
         }
-        console.log("ddd");
         _this.$refs.writeScon.scrollLeft = _this.distance; 
       },time);
     },
@@ -125,12 +129,16 @@ export default {
 
       if(x<this.moveS_xmin){
         x = this.moveS_xmin;
-        if(this.scrollIntervalId<0){ this.scrollX('left'); }
+        if(this.scrollIntervalId<0 && this.distance>0){ this.scrollX('left'); }
       }else if( x>this.moveS_xmax ){
         x = this.moveS_xmax;
         if( this.scrollIntervalId<0 && this.distance<this.scrollx_max ){ 
           this.scrollX('right');
          }
+        //  在滚动容器中间区域时，停止滚动
+      }else{
+        clearInterval(this.scrollIntervalId);
+        this.scrollIntervalId = -1;
       }
 
       if(y<this.moveS_ymin){
@@ -145,6 +153,10 @@ export default {
     },
     /**
      * 移动data-origin
+     * 效果：1、利用一个非列表里的data-origin(名为A)，渲染出需要移动的data-origin一样的数据
+     *      2、透明度都将为0.5
+     *      3、移动A，A跟随鼠标移动
+     *      4、鼠标点击，A停止移动，如果点击了某个列表的data-origin，则在这个data-origin前插入需要移动的data-origin,(改变对应数据即可，将需要移动的数据先复制值对应位置，然后删除原来的)
      */
     moveOrigin(data){
       let _this = this;
@@ -169,11 +181,12 @@ export default {
       let c_height = this.$refs.writeCon.clientHeight || this.$refs.writeCon.offestHeight;
       this.moveS_ymin = data.y_min;
       this.moveS_xmin = data.x_min;
-      this.moveS_ymax = data.y_min + c_height - data.itemH;
-      this.moveS_xmax = data.x_min + c_width - data.itemW;
+      this.moveS_ymax = data.y_min + c_height - data.itemH/2;
+      this.moveS_xmax = data.x_min + c_width - data.itemW/2;
 
       // 获得横向滚动最大距离
-      this.scrollx_max = this.$refs.writeScon.clientWidth || this.$refs.writeScon.offestWidth;
+      let scon_width = this.$refs.writeScon.clientWidth || this.$refs.writeScon.offestWidth;
+      this.scrollx_max = this.$refs.writeScon.scrollWidth - scon_width;
 
       // 绑定鼠标移动事件
       document.addEventListener("mousemove",_this.moveXY);

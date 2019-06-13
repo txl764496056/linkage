@@ -3,7 +3,7 @@
     ref="itemBox" 
     :class="{opacity:opacity==source.data_origin_id}">
         <div class="dr-title">
-            <i @click="absOrigin" class="iconfont icon-yidong move"></i>
+            <i @click="shiftOrigin" class="iconfont icon-yidong move"></i>
             Data origin
             <i @click="deleteOrigin()" class="iconfont icon-remove remove"></i>
         </div>
@@ -82,8 +82,6 @@ import parameterItem from './ParameterItem';
                 parameter:"", //参数信息
                 response:"", //返回字段
                 opacity:-1, //data-origin定位
-                // posAbs_x:0, //data-origin:x轴值
-                // posAbs_y:0, //data-origin:y轴值
             }
         },
         mounted(){
@@ -91,24 +89,10 @@ import parameterItem from './ParameterItem';
             this.response = this.source.response;
         },
         methods:{
-            // moveXY(evt){
-            //     this.posAbs_x = evt.clientX;
-            //     this.posAbs_y = evt.clientY;
-            // },
-            // moveOrigin(){
-            //     let _this = this;
-                
-            //     document.addEventListener("mousemove",_this.moveXY);
-
-            //     document.addEventListener("mousedown",function(){
-            //         document.removeEventListener("mousemove",_this.moveXY);
-            //         _this.posAbs = -1;
-            //     });
-            // },
             /**
-             * 改变data-origin定位
+             * 移动data-origin
              */
-            absOrigin(evt){
+            shiftOrigin(evt){
                 
                 this.opacity = this.source.data_origin_id;
 
