@@ -46,6 +46,9 @@ import parameterItem from './ParameterItem';
             headerBody,
             parameterItem
         },
+        model:{
+            prop:'opacity'
+        },
         props:{
             source:{
                 type:Object,
@@ -74,6 +77,10 @@ import parameterItem from './ParameterItem';
                 default:function(){
                     return []
                 }
+            },
+            opacity:{
+                type:Number,
+                default:-1
             }
         },
         data:function(){
@@ -81,7 +88,7 @@ import parameterItem from './ParameterItem';
                 filter:[], //过滤器
                 parameter:"", //参数信息
                 response:"", //返回字段
-                opacity:-1, //data-origin定位
+                // opacity:-1, //data-origin定位
             }
         },
         mounted(){
@@ -89,6 +96,12 @@ import parameterItem from './ParameterItem';
             this.response = this.source.response;
         },
         methods:{
+            /**
+             * opacity 透明度恢复为 1
+             */
+            // changeOpacity(){
+            //     this.opacity = -1;
+            // },
             /**
              * 移动data-origin
              */
@@ -221,7 +234,7 @@ import parameterItem from './ParameterItem';
                 border-color:$color-theme;
             }
             &.selected{
-               color:$color-white;
+               color:$color-white;background-color:$color-theme;
             }
         }
     }

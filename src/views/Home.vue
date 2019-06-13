@@ -7,47 +7,24 @@
       </select>
       <button @click="addData()">add</button>
     </div>
-    <div class="container" ref="writeCon">
-      <div class="title">write</div>
-      <div ref="writeScon" class="content scroll">
-        <data-origin class="do-item" 
-        v-for="(item,index) in write_list" 
-        :key="item.source_id" 
-        :source="item"
-        :feild_color="feild_color"
-        :iconLink_state="iconLink_state"
-        :all_param_feild="all_param_feild"
-        :write_index="index"
-        v-on:moveOrigin="moveOrigin"
-        v-on:deleteOrigin="deleteOrigin"></data-origin>
-      </div>
-    </div>
-    <div class="container">
-      <div class="title">read</div>
-      <div class="content scroll">
-        <data-origin class="do-item" 
-        v-for="item in read_list" 
-        :key="item.source_id" 
-        :feild_color="feild_color"
-        :iconLink_state="iconLink_state"
-        :all_param_feild="all_param_feild"
-        :source="item"
-        v-on:moveOrigin="moveOrigin"
-        v-on:deleteOrigin="deleteOrigin"></data-origin>
-      </div>
-    </div>
+
+    <scroll-container 
+    :title="'write'" 
+    :feild_color="feild_color"
+    :iconLink_state="iconLink_state"
+    :all_param_feild="all_param_feild"
+    :source_list="write_list">
+    </scroll-container>
+
+    <scroll-container 
+    :title="'read'" 
+    :feild_color="feild_color"
+    :iconLink_state="iconLink_state"
+    :all_param_feild="all_param_feild"
+    :source_list="read_list">
+    </scroll-container>
+    
     <button class="submit" @click="submit()">提交</button>
-    <!-- 移动元素 start -->
-    <!-- <div class="move-data-origin"> -->
-      <data-origin 
-        ref="moveDataOrigin" 
-        class="do-item move-data-origin"
-        :style="{left:moveS_x+'px',top:moveS_y+'px'}"
-        v-for="(item) in moveSource" 
-        :key="item.name"
-        :source="item"></data-origin>
-    <!-- </div> -->
-    <!-- 移动元素 end -->
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
   </div>
@@ -55,11 +32,11 @@
 
 <script>
 // @ is an alias to /src
-import dataOrigin from '../components/DataOrigin'
+import scrollContainer from '../components/ScrollContainer'
 export default {
   name: 'home',
   components: {
-    dataOrigin //参数信息组件
+    scrollContainer
   },
   data(){
     return {
@@ -71,21 +48,6 @@ export default {
       num:0, //字段值加序列号(parameter下的字段)
       data_origin_id:0, //DataOrigin 唯一标识符，也是数量统计，每次页面刷新则重新排序
       feild_color:[] ,//返回字段高亮颜色判断
-      moveSource:[], //移动data-origin数据
-      
-      moveS_x:0, // 可移动data-origin top值
-      moveS_y:0, //可移动data-origin left值
-      // 可移动data-origin 最小坐标点  
-      moveS_ymin:0,
-      moveS_xmin:0,
-      // 可移动data-origin 最大坐标点
-      moveS_ymax:0,
-      moveS_xmax:0,
-
-      distance:0 ,//滚动条滚动距离
-      scrollIntervalId:-1, // 滚动动画计时器id
-      scrollx_max:0 //横向滚动的最大距离
-
     }
   },
   mounted(){
@@ -97,124 +59,6 @@ export default {
     });  
   },
   methods:{
-    /**
-     * 容器滚动
-     * direction  滚动方向   right:向右， left:向左
-     * step 每次滚动距离
-     * scrollLeft  滚动容器向左滚动的真实距离，不是滚动条的滚动距离
-     * 停止滚动条件：1、滚动距离达到临界值，2、鼠标滑入至滚动容器中间区域
-     */
-    scrollX(direction){
-      let _this = this;
-
-      let step = 30,time = 100;
-      if(direction=="left"){
-        step = -step;
-      }
-            
-      this.scrollIntervalId = setInterval(function(){
-        _this.distance += step;
-        // 停止滚动
-        if( _this.distance>_this.scrollx_max || _this.distance<0 ){
-          clearInterval(_this.scrollIntervalId);
-          _this.scrollIntervalId = -1;
-        }
-        _this.$refs.writeScon.scrollLeft = _this.distance; 
-      },time);
-    },
-    moveXY(evt){
-      
-      let x = evt.clientX;
-      let y = evt.clientY;
-
-      if(x<this.moveS_xmin){
-        x = this.moveS_xmin;
-        if(this.scrollIntervalId<0 && this.distance>0){ this.scrollX('left'); }
-      }else if( x>this.moveS_xmax ){
-        x = this.moveS_xmax;
-        if( this.scrollIntervalId<0 && this.distance<this.scrollx_max ){ 
-          this.scrollX('right');
-         }
-        //  在滚动容器中间区域时，停止滚动
-      }else{
-        clearInterval(this.scrollIntervalId);
-        this.scrollIntervalId = -1;
-      }
-
-      if(y<this.moveS_ymin){
-        y = this.moveS_ymin;
-      }else if( y>this.moveS_ymax ){
-        y = this.moveS_ymax;
-      }
-
-      this.moveS_x = x;
-      this.moveS_y = y;
-
-    },
-    /**
-     * 移动data-origin
-     * 效果：1、利用一个非列表里的data-origin(名为A)，渲染出需要移动的data-origin一样的数据
-     *      2、透明度都将为0.5
-     *      3、移动A，A跟随鼠标移动
-     *      4、鼠标点击，A停止移动，如果点击了某个列表的data-origin，则在这个data-origin前插入需要移动的data-origin,(改变对应数据即可，将需要移动的数据先复制值对应位置，然后删除原来的)
-     */
-    moveOrigin(data){
-      let _this = this;
-
-      let id = data.id;
-      let list = [];
-      list.push(...this.write_list);
-      list.push(...this.read_list);
-      // 获取对应数据，渲染可移动data-origin
-      for(let i=0;i<list.length;i++){
-        if(list[i].data_origin_id==id){
-          this.moveSource.push(list[i]);
-          break;
-        }
-      }
-      // 初始化坐标值
-      this.moveS_x = data.x;
-      this.moveS_y = data.y;
-
-      // 坐标是值极点
-      let c_width = this.$refs.writeCon.clientWidth || this.$refs.writeCon.offestWidth;
-      let c_height = this.$refs.writeCon.clientHeight || this.$refs.writeCon.offestHeight;
-      this.moveS_ymin = data.y_min;
-      this.moveS_xmin = data.x_min;
-      this.moveS_ymax = data.y_min + c_height - data.itemH/2;
-      this.moveS_xmax = data.x_min + c_width - data.itemW/2;
-
-      // 获得横向滚动最大距离
-      let scon_width = this.$refs.writeScon.clientWidth || this.$refs.writeScon.offestWidth;
-      this.scrollx_max = this.$refs.writeScon.scrollWidth - scon_width;
-
-      // 绑定鼠标移动事件
-      document.addEventListener("mousemove",_this.moveXY);
-      // 鼠标按下，移除绑定的移动事件
-      document.addEventListener("mousedown",function(){
-          document.removeEventListener("mousemove",_this.moveXY);
-          _this.posAbs = -1;
-      });
-    },
-    /**
-     * 删除data-origin
-     */
-    deleteOrigin(data){
-      let id = data.data_origin_id;
-      this.deleteOriginItem(this.write_list,id);
-      this.deleteOriginItem(this.read_list,id);
-    },
-    /**
-     * 删除可读或可写 某一个
-     */
-    deleteOriginItem(arr,id){
-      for(let i=0;i<arr.length;i++){
-        if(arr[i].data_origin_id==id){
-          arr.splice(i,1);
-          break;
-        }
-      }
-    },
     /**
      * parameter(参数信息) 下所有字段加序列号
      * 每个字段值的关联图标状态
@@ -367,29 +211,6 @@ export default {
     border:1px solid $color-gray-11;border-radius:5px;box-shadow:inset 0 0 12px $color-gray-11;
   }
 }
-.container{
-  margin-top:30px;
-  >.title{
-    $h:50px;
-    height:$h;color:$color-white;background-color:$color-theme;font-size:28px;font-weight:bold;padding:0 20px;line-height:$h;
-  }
-  .content{
-    padding:20px 10px;position:relative;
-    /* 属性嵌套 */
-    border: 1px solid $color-theme {
-      top:none;
-    };
-
-    &.scroll{
-      display:flex;overflow-x:auto;
-      .dr-item{
-        flex-shrink:0;
-        margin:10px;
-      }
-    }
-    
-  }
-}
 .do-item{
   width:360px;
 }
@@ -398,8 +219,5 @@ export default {
   background-color:$color-theme;border:none;color:#fff;font-size:20px;display:block;margin:50px auto;padding:8px 20px;border-radius:5px;min-width:120px;letter-spacing: 1px;
 }
 
-.move-data-origin{
-  position:fixed;z-index:999;opacity:0.5;
-}
 </style>
 
