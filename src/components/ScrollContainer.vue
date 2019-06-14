@@ -2,41 +2,26 @@
     <div class="container" ref="writeCon">
         <div class="title">{{title}}</div>
         <div ref="writeScon" class="content scroll">
-            <!-- <template  v-if="title=='write'"> -->
-                <data-origin class="do-item" 
-                :ref="'originItem'+index"
-                v-for="(item,index) in source_list" 
-                :key="item.source_id" 
-                :source="item"
-                :feild_color="feild_color"
-                :iconLink_state="iconLink_state"
-                :all_param_feild="all_param_feild"
-                :write_index="getIndex(index)"
-                v-on:moveOrigin="moveOrigin"
-                v-on:deleteOrigin="deleteOrigin"></data-origin>
-            <!-- </template> -->
-            
-            <!-- <template v-else>
-                <data-origin class="do-item" 
-                v-for="item in source_list" 
-                :key="item.source_id" 
-                :source="item"
-                :feild_color="feild_color"
-                :iconLink_state="iconLink_state"
-                :all_param_feild="all_param_feild"
-                v-on:moveOrigin="moveOrigin"
-                v-on:deleteOrigin="deleteOrigin"></data-origin>
-            </template> -->
+            <data-origin class="do-item" 
+            :ref="'originItem'+index"
+            v-for="(item,index) in source_list" 
+            :key="item.source_id" 
+            :source="item"
+            :feild_color="feild_color"
+            :iconLink_state="iconLink_state"
+            :all_param_feild="all_param_feild"
+            :write_index="getIndex(index)"
+            v-on:moveOrigin="moveOrigin"
+            v-on:deleteOrigin="deleteOrigin"></data-origin>
         </div>
         <!-- 移动元素 start -->
         <data-origin 
+        v-if="moveSource.source_id"
         ref="moveDataOrigin" 
         class="do-item move-data-origin"
         :class="{dis:moveDis}"
         :style="{left:moveS_x+'px',top:moveS_y+'px'}"
-        v-for="(item) in moveSource" 
-        :key="item.name"
-        :source="item"></data-origin>
+        :source="moveSource"></data-origin>
         <!-- 移动元素 end -->
     </div>
 </template>
@@ -80,7 +65,7 @@ import dataOrigin from '../components/DataOrigin'
         },
         data:function(){
             return {
-                moveSource:[], //移动data-origin数据
+                moveSource:{}, //移动data-origin数据
                 moveDis:false, //移动data-origin true:隐藏 ,false:显示
 
                 moveS_x:0, // 可移动data-origin top值
@@ -164,15 +149,16 @@ import dataOrigin from '../components/DataOrigin'
 
                 this.moveDis = false;
 
-                let id = data.id;
-                let list = this.source_list;
+                // let id = data.id;
+                // let list = this.source_list;
+                this.moveSource = this.source_list[data.index];
                 // 获取对应数据，渲染可移动data-origin
-                for(let i=0;i<list.length;i++){
-                    if(list[i].data_origin_id==id){
-                    this.moveSource.push(list[i]);
-                    break;
-                    }
-                }
+                // for(let i=0;i<list.length;i++){
+                //     if(list[i].data_origin_id==id){
+                //     this.moveSource.push(list[i]);
+                //     break;
+                //     }
+                // }
                 // 初始化坐标值
                 this.moveS_x = data.x;
                 this.moveS_y = data.y;
@@ -196,7 +182,8 @@ import dataOrigin from '../components/DataOrigin'
                 document.addEventListener("mousedown",function(){
                     document.removeEventListener("mousemove",_this.moveXY);
                     _this.moveDis = true;
-                    _this.moveSource.splice(0,_this.moveSource.length);//清空数组，否则会每点一次多一个数据
+                    // _this.moveSource.splice(0,_this.moveSource.length);//清空数组，否则会每点一次多一个数据
+                    _this.moveSource = {};
                     _this.$refs[('originItem'+data.index)][0].changeOpacity();
                 });
             },
@@ -247,7 +234,13 @@ import dataOrigin from '../components/DataOrigin'
   }
 }
 .move-data-origin{
-  position:fixed;z-index:999;opacity:0.5;
+    // 根据父元素定位，配合pageX,pageY,无论页面滚动多少，它始终在相对于父元素，在视觉上也是在指定范围内。
+    // 会跟着页面滚动而 滚动
+  position:absolute;
+  //与clientX,clientY配合，移动元素会在屏幕的指定范围内移动，但是页面滚动后，视觉上感觉这个元素离开了容器
+  // 不会跟着页面滚动而滚动
+  // position:fixed; 
+  z-index:999;opacity:0.5;
   &.dis{
       display:none;
   }

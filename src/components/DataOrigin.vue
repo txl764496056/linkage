@@ -102,9 +102,12 @@ import parameterItem from './ParameterItem';
                 
                 this.opacity = this.source.data_origin_id;
 
-                // 触发的坐标点
-                let x = evt.clientX;
-                let y = evt.clientY;
+                // 触发的坐标点,根据屏幕
+                // let x = evt.clientX;
+                // let y = evt.clientY;
+                // 触发坐标点 ，根据页面
+                let x = evt.pageX;
+                let y = evt.pageY;
 
                 // 组件的宽和高
                 let itemH = this.$refs.itemBox.clientHeight || this.$refs.itemBox.offsetHeight;
@@ -116,7 +119,6 @@ import parameterItem from './ParameterItem';
                 let index = this.write_index;
 
                 this.$emit("moveOrigin",{
-                    id:this.source.data_origin_id,
                     index,
                     x,
                     y,
@@ -193,7 +195,10 @@ import parameterItem from './ParameterItem';
         watch:{
             // 颜色监控
            feild_color:function(){
-            // this.feild_active = -1;
+           },
+           source(){
+                this.parameter = this.source.parameter;
+                this.response = this.source.response;
            }
         } 
     }
