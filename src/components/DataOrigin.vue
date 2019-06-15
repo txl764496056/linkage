@@ -1,10 +1,10 @@
 <template>
     <div class="dr-item"
-    ref="itemBox" 
+    ref="itemBox"
     :class="{opacity:opacity==source.data_origin_id}">
         <div class="dr-title">
             <i @click="shiftOrigin" class="iconfont icon-yidong move"></i>
-            Data origin
+            Data origin{{source.data_origin_id}}
             <i @click="deleteOrigin()" class="iconfont icon-remove remove"></i>
         </div>
         <div class="dr-container">
@@ -59,7 +59,13 @@ import parameterItem from './ParameterItem';
                     return [];
                 }
             },
+            // write类型数据的序列号
             write_index:{
+                type:Number,
+                default:-1
+            },
+            // write read 两种类型的序列号，都是0开始，在每个滚动组件里从0开始排序，为移动插入数据源用
+            index:{
                 type:Number,
                 default:-1
             },
@@ -99,7 +105,6 @@ import parameterItem from './ParameterItem';
              * 移动data-origin
              */
             shiftOrigin(evt){
-                
                 this.opacity = this.source.data_origin_id;
 
                 // 触发的坐标点,根据屏幕
@@ -116,7 +121,7 @@ import parameterItem from './ParameterItem';
                 // 坐标值 最小点  范围
                 let x_min = x - this.$refs.itemBox.offsetLeft;
                 let y_min = y - this.$refs.itemBox.offsetTop;
-                let index = this.write_index;
+                let index = this.index;
 
                 this.$emit("moveOrigin",{
                     index,
@@ -206,6 +211,13 @@ import parameterItem from './ParameterItem';
 
 <style lang="scss" scoped>
 @import "@/scss/base.scss";
+.dr-item{
+    margin:10px;
+    // &.translate{
+    //     // margin-left:30px;
+    //     box-shadow:0 0 10px $color-theme;
+    // }
+}
 .opacity{
     opacity:0.5;
 }

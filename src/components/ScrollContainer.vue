@@ -1,9 +1,12 @@
 <template>
     <div class="container" ref="writeCon">
         <div class="title">{{title}}</div>
+        <!-- :class="{translate:hoverStatus[index]&&!moveDis}" -->
+        <!-- @mouseover.native="setHoverStatus({index})" -->
         <div ref="writeScon" class="content scroll">
             <data-origin class="do-item" 
             :ref="'originItem'+index"
+            :class="{translate:hoverStatus[index]}"
             v-for="(item,index) in source_list" 
             :key="item.source_id" 
             :source="item"
@@ -11,6 +14,8 @@
             :iconLink_state="iconLink_state"
             :all_param_feild="all_param_feild"
             :write_index="getIndex(index)"
+            :index="index"
+            @mouseover.native="overItem(index)"
             v-on:moveOrigin="moveOrigin"
             v-on:deleteOrigin="deleteOrigin"></data-origin>
         </div>
@@ -65,8 +70,11 @@ import dataOrigin from '../components/DataOrigin'
         },
         data:function(){
             return {
+                // translateItem:false,
+                index:-1, //当前移动元素的序列号
+
                 moveSource:{}, //移动data-origin数据
-                moveDis:false, //移动data-origin true:隐藏 ,false:显示
+                moveDis:true, //移动data-origin true:隐藏 ,false:显示
 
                 moveS_x:0, // 可移动data-origin top值
                 moveS_y:0, //可移动data-origin left值
@@ -79,10 +87,51 @@ import dataOrigin from '../components/DataOrigin'
 
                 distance:0 ,//滚动条滚动距离
                 scrollIntervalId:-1, // 滚动动画计时器id
-                scrollx_max:0 //横向滚动的最大距离
+                scrollx_max:0, //横向滚动的最大距离
+                hoverStatus:[], //所有data-origin的悬停状态记录，true:鼠标悬停在当前元素，false：鼠标未悬停在当前元素
+                hoverCurr:-1 //鼠标悬停的data-origin的序列号
             }
         },
+        mounted(){
+            this.initHoverStatus();
+        },
         methods:{
+            getIndex(index){
+                return this.title=='write' ? index:-1;
+            },
+            /**
+             * 移动data-origin显示时，悬停效果生效
+             * 状态序列号，与source_list每个对象序列号对应
+             */
+            overItem(index){
+                // 若可移动data-origin是隐藏的，则不往后执行
+                if(this.moveDis){return;}
+                this.hoverCurr = index;
+                // 悬停状态
+                this.hoverStatus.splice(index,1,true);
+                // 其他的去除悬停状态
+                for(let i=0;i<this.hoverStatus.length;i++){
+                    if(i!==index){
+                        this.hoverStatus.splice(i,1,false);
+                    }
+                }
+            },
+            /**
+             * 所有 data-origin 的悬停状态设为false
+             */
+            setHoverStatus(){
+                for(let i=0;i<this.hoverStatus.length;i++){
+                    this.hoverStatus.splice(i,1,false);
+                }
+            },
+            /**
+             * 初始化每个的悬停状态
+             */
+            initHoverStatus(){
+                for(let i=0;i<this.source_list.length;i++){
+                    this.hoverStatus.push(false);
+                }
+            },
             /**
              * 容器滚动
              * direction  滚动方向   right:向右， left:向左
@@ -137,28 +186,40 @@ import dataOrigin from '../components/DataOrigin'
                 this.moveS_y = y;
 
             },
+            /**
+             * 鼠标按下事件
+             */
+            moveDown(){
+                // 删除绑定的mousemove事件
+                document.removeEventListener("mousemove",this.moveXY);
+                // 隐藏移动data-origin
+                this.moveDis = true;
+                // 清空可移动元素的数据
+                this.moveSource = {};
+                this.$refs[('originItem'+this.index)][0].changeOpacity(); //先清除透明度状态，再移动
+
+                // 完成移动，将移动元素插入指定位置
+                this.doneMove(this.index);
+                this.setHoverStatus(); //清除data-origin的悬停状态
+                this.hoverCurr = -1;
+            },
              /**
              * 移动data-origin
              * 效果：1、利用一个非列表里的data-origin(名为A)，渲染出需要移动的data-origin一样的数据
              *      2、透明度都将为0.5
              *      3、移动A，A跟随鼠标移动
-             *      4、鼠标点击，A停止移动，如果点击了某个列表的data-origin，则在这个data-origin前插入需要移动的data-origin,(改变对应数据即可，将需要移动的数据先复制值对应位置，然后删除原来的)
+             *      4、鼠标点击，A停止移动，获取data-origin的悬停状态为true的序列号= 可移动元素在source_list中的序列号
+             *      5、将可移动元素，插入至悬停元素之前的，并且删除原数组（source_list）中可移动的数据
              */
             moveOrigin(data){
                 let _this = this;
 
                 this.moveDis = false;
+                this.index = data.index;
 
-                // let id = data.id;
-                // let list = this.source_list;
+                // 找到移动元素的数据
                 this.moveSource = this.source_list[data.index];
-                // 获取对应数据，渲染可移动data-origin
-                // for(let i=0;i<list.length;i++){
-                //     if(list[i].data_origin_id==id){
-                //     this.moveSource.push(list[i]);
-                //     break;
-                //     }
-                // }
+
                 // 初始化坐标值
                 this.moveS_x = data.x;
                 this.moveS_y = data.y;
@@ -178,14 +239,29 @@ import dataOrigin from '../components/DataOrigin'
                 // 绑定鼠标移动事件
                 document.addEventListener("mousemove",_this.moveXY);
 
-                // 鼠标按下，移除绑定的移动事件
-                document.addEventListener("mousedown",function(){
-                    document.removeEventListener("mousemove",_this.moveXY);
-                    _this.moveDis = true;
-                    // _this.moveSource.splice(0,_this.moveSource.length);//清空数组，否则会每点一次多一个数据
-                    _this.moveSource = {};
-                    _this.$refs[('originItem'+data.index)][0].changeOpacity();
-                });
+                // 鼠标按下
+                document.addEventListener("mousedown",this.moveDown);
+            },
+            /**
+             * 对数据进行插入删除，页面重新渲染，模拟移动
+             * index,是需要移动的data-origin的序列号
+             */
+            doneMove(index){
+                let item = Object.assign({},this.source_list[index]);
+                // let item = this.source_list[index];
+                // 插入位置在移动元素后面
+                if(this.hoverCurr>index){
+                    this.source_list.splice(this.hoverCurr,0,item);//插入
+                    this.source_list.splice(index,1); //删除
+                    // 插入位置在移动元素前面
+                }else if(this.hoverCurr<index){
+                    this.source_list.splice(index,1); //删除
+                    this.source_list.splice(this.hoverCurr,0,item);//插入
+                }
+                // 插入位置与就是移动元素之前的位置，则不做处理
+
+                // 删除绑定的mousedown事件
+                document.removeEventListener("mousedown",this.moveDown);
             },
             /**
              * 删除data-origin
@@ -203,6 +279,11 @@ import dataOrigin from '../components/DataOrigin'
             },
             getIndex(index){
                 return this.title=='write' ? index : -1;
+            }
+        },
+        watch:{
+            source_list(){
+                this.initHoverStatus();
             }
         }
     }
@@ -225,9 +306,12 @@ import dataOrigin from '../components/DataOrigin'
 
     &.scroll{
       display:flex;overflow-x:auto;
-      .dr-item{
-        flex-shrink:0;
-        margin:10px;
+      .do-item{
+        flex-shrink:0;transition:all 0.05s;
+        &.translate{
+            margin-left:60px;
+            // box-shadow:0 0 10px $color-theme;
+        }   
       }
     }
     

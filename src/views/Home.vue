@@ -185,7 +185,7 @@ export default {
         if(temp){
           result.push(temp);
         }
-
+        console.log(result);
       }); //end-map
     },
     /**
