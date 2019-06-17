@@ -13,7 +13,7 @@
             :feild_color="feild_color"
             :iconLink_state="iconLink_state"
             :all_param_feild="all_param_feild"
-            :write_index="getIndex(index)"
+            :write_index="originIndex(index)"
             :index="index"
             @mouseover.native="overItem(index)"
             v-on:moveOrigin="moveOrigin"
@@ -248,7 +248,6 @@ import dataOrigin from '../components/DataOrigin'
              */
             doneMove(index){
                 let item = Object.assign({},this.source_list[index]);
-                // let item = this.source_list[index];
                 // 插入位置在移动元素后面
                 if(this.hoverCurr>index){
                     this.source_list.splice(this.hoverCurr,0,item);//插入
@@ -277,7 +276,7 @@ import dataOrigin from '../components/DataOrigin'
                     }
                 }
             },
-            getIndex(index){
+            originIndex(index){
                 return this.title=='write' ? index : -1;
             }
         },
