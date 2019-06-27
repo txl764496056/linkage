@@ -64,10 +64,13 @@
              * 设置 dr-body 的高度
              */
             setHeight(height){
+                let isVis = 'visible';
                 if(height!=='auto'){
                     height += 'px';
+                    isVis = 'hidden';
                 }
                 this.$set(this.dr_style,'height',height); 
+                this.$set(this.dr_style,'overflow',isVis);
             },
             /**
              * 展开dr-body
