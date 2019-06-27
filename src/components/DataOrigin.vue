@@ -102,9 +102,30 @@ import parameterItem from './ParameterItem';
                 this.opacity = -1;
             },
             /**
+             * 取消  所有高亮状态
+             */
+            cancelLight(){
+                for(let i=0;i<this.feild_color.length;i++){
+                    this.feild_color.splice(i,1,false);
+                }
+            },
+            /**
+             * 所有关联图标切换至手型，即 取消所有关联状态
+             */
+            cancelLink(){
+                for(let i=0;i<this.iconLink_state.length;i++){
+                    this.iconLink_state.splice(i,1,false);
+                }
+                
+            },
+            /**
              * 移动data-origin
              */
             shiftOrigin(evt){
+
+                this.cancelLink();
+                this.cancelLight();
+
                 this.opacity = this.source.data_origin_id;
 
                 // 触发的坐标点,根据屏幕
@@ -205,7 +226,7 @@ import parameterItem from './ParameterItem';
                 this.parameter = this.source.parameter;
                 this.response = this.source.response;
            }
-        } 
+        }
     }
 </script>
 

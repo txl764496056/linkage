@@ -73,6 +73,7 @@ import dataOrigin from '../components/DataOrigin'
             this.initHoverStatus();
         },
         methods:{
+            
             getIndex(index){
                 return this.title=='write' ? index:-1;
             },
@@ -105,6 +106,7 @@ import dataOrigin from '../components/DataOrigin'
              * 初始化每个的悬停状态
              */
             initHoverStatus(){
+                this.hoverStatus = [];
                 for(let i=0;i<this.source_list.length;i++){
                     this.hoverStatus.push(false);
                 }
