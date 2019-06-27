@@ -213,10 +213,6 @@ import parameterItem from './ParameterItem';
 @import "@/scss/base.scss";
 .dr-item{
     margin:10px;
-    // &.translate{
-    //     // margin-left:30px;
-    //     box-shadow:0 0 10px $color-theme;
-    // }
 }
 .opacity{
     opacity:0.5;
@@ -227,6 +223,7 @@ import parameterItem from './ParameterItem';
     background-color:$color-theme;
     display:flex;justify-content: space-between;font-size:20px;
     color:$color-white;
+    user-select:none;
     .move,.remove{
         color:$color-kelly-1;font-size:20px; padding:0 10px;
     }
@@ -237,6 +234,7 @@ import parameterItem from './ParameterItem';
     
     // 返回字段列表
     .field-list{
+        margin-bottom:15px;margin-top:15px;
         .unit{
             color:$color-gray-6;margin:5px;border:1px solid $color-gray-11;padding:3px 10px;border-radius:6px;margin:5px;display:inline-block;
             &.light{
@@ -253,5 +251,8 @@ import parameterItem from './ParameterItem';
 }
 .pi-item{
     margin-bottom:10px;
+    &:first-of-type{
+        margin-top:10px;
+    }
 }
 </style>

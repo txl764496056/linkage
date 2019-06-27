@@ -3,7 +3,9 @@
         <div class="dr-header iconfont" 
         :class="{'icon-dw':isFold}"
          @click="foldDRBody()">{{title}}</div>
-        <div class="dr-body" :class="{fold:isFold}">
+        <div ref="dr"
+        class="dr-body" 
+        :style='dr_style'>
             <slot></slot>
         </div>
     </div>
@@ -20,8 +22,20 @@
         },
         data:function(){
             return {
-                isFold:false
+                isFold:false, //true:折叠 false:展开
+                dr_height:0, //保存 dr-body的高度
+                dr_style:{ //dr-body 内联样式
+                    overflow:'hidden',
+                } 
             }
+        },
+        mounted(){
+
+            // 节点渲染完成获取 dr-body 高度
+            this.$nextTick(function(){
+                this.getHeight();
+            });
+            
         },
         methods:{
             /**
@@ -29,6 +43,57 @@
              */
             foldDRBody(){
                 this.isFold = !this.isFold;
+                
+                if(this.isFold){
+                    this.fold();
+                }else{
+                    this.unfold();
+                    // dr-body 添加动画结束 事件
+                    this.$refs.dr.addEventListener('webkitTransitionEnd',this.drHAuto);
+                }
+
+            },
+            /**
+             * 展开完成后
+             * dr-body的高度设置为auto
+             */
+            drHAuto(){
+                this.setHeight('auto');
+            },
+            /**
+             * 设置 dr-body 的高度
+             */
+            setHeight(height){
+                if(height!=='auto'){
+                    height += 'px';
+                }
+                this.$set(this.dr_style,'height',height); 
+            },
+            /**
+             * 展开dr-body
+             */
+            unfold(){
+                this.setHeight(this.dr_height);
+            },
+            /**
+             * 折叠 dr-body
+             */
+            fold(){
+               let promise = Promise.resolve();
+               promise.then(()=>{
+                    this.getHeight();
+                    this.setHeight(this.dr_height) ;
+                    // dr-body 移除动画结束 事件
+                    this.$refs.dr.removeEventListener('webkitTransitionEnd',this.drHAuto);
+               }).then(()=>{
+                   this.setHeight(0);
+               })
+            },
+            /**
+             * 获取dr-body高度
+             */
+            getHeight(){
+                this.dr_height = this.$refs.dr.offsetHeight;
             }
         }
     }
@@ -44,6 +109,7 @@
     padding:0 10px;
     font-size:18px;
     display:flex;justify-content:space-between;
+    user-select:none;
     &::after{
         color:$color-theme;
         content:"\e6b0"; 
@@ -57,11 +123,8 @@
 }
 
 .dr-body{
-    padding:15px 10px;
-    transition:height 1s;
+    padding:0 10px;
+    transition:all 0.7s;
     background-color:#fff;
-    &.fold{
-        height:0;overflow:hidden;padding-bottom:0;padding-top:0;
-    }
 }
 </style>

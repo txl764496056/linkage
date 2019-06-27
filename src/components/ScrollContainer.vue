@@ -1,8 +1,6 @@
 <template>
     <div class="container" ref="writeCon">
         <div class="title">{{title}}</div>
-        <!-- :class="{translate:hoverStatus[index]&&!moveDis}" -->
-        <!-- @mouseover.native="setHoverStatus({index})" -->
         <div ref="writeScon" class="content scroll">
             <data-origin class="do-item" 
             :ref="'originItem'+index"
@@ -10,9 +8,7 @@
             v-for="(item,index) in source_list" 
             :key="item.source_id" 
             :source="item"
-            :feild_color="feild_color"
-            :iconLink_state="iconLink_state"
-            :all_param_feild="all_param_feild"
+            v-bind.sync="$attrs.state_msg"
             :write_index="originIndex(index)"
             :index="index"
             @mouseover.native="overItem(index)"
@@ -49,28 +45,9 @@ import dataOrigin from '../components/DataOrigin'
                     return [];
                 }
             },
-            feild_color:{
-                type:Array,
-                default:function(){
-                    return [];
-                }
-            },
-            iconLink_state:{
-                type:Array,
-                default:function(){
-                    return [];
-                }
-            },
-            all_param_feild:{
-                type:Array,
-                default:function(){
-                    return []
-                }
-            }
         },
         data:function(){
             return {
-                // translateItem:false,
                 index:-1, //当前移动元素的序列号
 
                 moveSource:{}, //移动data-origin数据

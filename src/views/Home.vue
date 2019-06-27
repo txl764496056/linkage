@@ -10,17 +10,13 @@
 
     <scroll-container 
     :title="'write'" 
-    :feild_color="feild_color"
-    :iconLink_state="iconLink_state"
-    :all_param_feild="all_param_feild"
+    :state_msg='state_msg'
     :source_list="write_list">
     </scroll-container>
 
     <scroll-container 
     :title="'read'" 
-    :feild_color="feild_color"
-    :iconLink_state="iconLink_state"
-    :all_param_feild="all_param_feild"
+    :state_msg="state_msg"
     :source_list="read_list">
     </scroll-container>
     
@@ -43,11 +39,13 @@ export default {
       read_list:[], //可读数据
       write_list:[], //可写数据
       source_type:1, //可读可写数据类型值 1：可读，2：可写
-      iconLink_state:[], //所有手型/关联图标状态。true：显示关联图标，false：显示手型图标
-      all_param_feild:[],//所有参数信息，每个字段，序列号与图标状态一一对应
+      state_msg:{
+         iconLink_state:[], //所有手型/关联图标状态。true：显示关联图标，false：显示手型图标
+         all_param_feild:[],//所有参数信息，每个字段，序列号与图标状态一一对应
+         feild_color:[] ,//返回字段高亮颜色判断
+      },
       num:0, //字段值加序列号(parameter下的字段)
       data_origin_id:0, //DataOrigin 唯一标识符，也是数量统计，每次页面刷新则重新排序
-      feild_color:[] ,//返回字段高亮颜色判断
     }
   },
   mounted(){
@@ -65,9 +63,9 @@ export default {
      */
     paramFieldIndex(obj){
       for(let key in obj){
-          this.iconLink_state.push(false); //每个字段值的关联图标状态
+          this.state_msg.iconLink_state.push(false); //每个字段值的关联图标状态
           obj[key].para_index = this.num++; //每个字段值加序列号，
-          this.all_param_feild.push(obj[key]); //存放所有的参数信息 字段对象
+          this.state_msg.all_param_feild.push(obj[key]); //存放所有的参数信息 字段对象
         }
     },
     /**
@@ -86,7 +84,7 @@ export default {
           this.read_list.push(obj);
         }else{
           this.write_list.push(obj);
-          this.feild_color.push(false);//返回字段状态，可写的才有返回字段
+          this.state_msg.feild_color.push(false);//返回字段状态，可写的才有返回字段
         }
     },
     /**
