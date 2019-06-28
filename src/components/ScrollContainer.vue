@@ -3,7 +3,6 @@
         <div class="title">{{title}}</div>
         <div ref="writeScon" class="content scroll">
             <data-origin class="do-item" 
-            :ref="'originItem'+index"
             :class="{translate:hoverStatus[index]}"
             v-for="(item,index) in source_list" 
             :key="item.source_id" 
@@ -11,6 +10,8 @@
             v-bind.sync="$attrs.state_msg"
             :write_index="originIndex(index)"
             :index="index"
+            :isDown="isDown"
+            v-on:initIsDown='initIsDown'
             @mouseover.native="overItem(index)"
             v-on:moveOrigin="moveOrigin"
             v-on:deleteOrigin="deleteOrigin"></data-origin>
@@ -62,6 +63,8 @@ import dataOrigin from '../components/DataOrigin'
                 moveS_ymax:0,
                 moveS_xmax:0,
 
+                isDown:false, //鼠标是否点下（已经已经浮起移动元素的情况下），true:点下  false：没有点下
+
                 distance:0 ,//滚动条滚动距离
                 scrollIntervalId:-1, // 滚动动画计时器id
                 scrollx_max:0, //横向滚动的最大距离
@@ -73,7 +76,6 @@ import dataOrigin from '../components/DataOrigin'
             this.initHoverStatus();
         },
         methods:{
-            
             getIndex(index){
                 return this.title=='write' ? index:-1;
             },
@@ -165,6 +167,9 @@ import dataOrigin from '../components/DataOrigin'
                 this.moveS_y = y;
 
             },
+            initIsDown(){
+                this.isDown = false;
+            },
             /**
              * 鼠标按下事件
              */
@@ -175,7 +180,7 @@ import dataOrigin from '../components/DataOrigin'
                 this.moveDis = true;
                 // 清空可移动元素的数据
                 this.moveSource = {};
-                this.$refs[('originItem'+this.index)][0].changeOpacity(); //先清除透明度状态，再移动
+                this.isDown = true;
 
                 // 完成移动，将移动元素插入指定位置
                 this.doneMove(this.index);
@@ -226,13 +231,43 @@ import dataOrigin from '../components/DataOrigin'
              * index,是需要移动的data-origin的序列号
              */
             doneMove(index){
+                if(this.hoverCurr==-1) return;
                 let item = Object.assign({},this.source_list[index]);
                 // 插入位置在移动元素后面
                 if(this.hoverCurr>index){
+                    
+                    // 如果是可读数据移动，插入位置在当前移动元素之前
+                    if(item.permission=='Write'){
+                        // 在移动数据与悬停数据之间的数据，且是可写数据
+                        for(let i=this.index+1;i<this.hoverCurr;i++){
+                            let temp = this.source_list[i];
+                            for(let key in temp.parameter){
+                                // 数据已选择关联数据（字段),并非手动输入
+                                if((temp.parameter[key].upper_level>=0)&&(temp.parameter[key].upper_level==item.data_origin_id)){
+                                    this.$delete(temp.parameter[key],'upper_level');
+                                    // this.$delete(item.parameter[key],'input_origin'); //手动输入的不需要清除
+                                    this.$delete(temp.parameter[key],'select_origin');
+                                }
+                            }
+                            this.source_list.splice(i,1,temp);
+                        }
+                    }
+
                     this.source_list.splice(this.hoverCurr,0,item);//插入
                     this.source_list.splice(index,1); //删除
                     // 插入位置在移动元素前面
                 }else if(this.hoverCurr<index){
+                    // 如果是可写数据移动，插入位置在当前移动元素之前
+                    if(item.permission=='Write'){
+                        for(let key in item.parameter){
+                            // 当前移动的数据已选择关联数据（字段),并非手动输入
+                            if(item.parameter[key].upper_level>=0&&item.parameter[key].upper_level>=this.hoverCurr){
+                                this.$delete(item.parameter[key],'upper_level');
+                                // this.$delete(item.parameter[key],'input_origin'); //手动输入的不需要清除
+                                this.$delete(item.parameter[key],'select_origin');
+                            }
+                        }
+                    }
                     this.source_list.splice(index,1); //删除
                     this.source_list.splice(this.hoverCurr,0,item);//插入
                 }

@@ -117,7 +117,7 @@ export default {
      * input_origin 用户输入的数据源
      * select_origin 用户选择的数据源
      * select_filter 用户选择的过滤器
-     * upper_level 用户选中数据源字段所在组件（data-origin)的序列号
+     * upper_level 用户选中数据源字段所在组件（data-origin)的序列号(唯一标识)
      * input_origin 与 select_origin 只能需要一个有值
      * 数据格式：
      * 1）用户输入：{

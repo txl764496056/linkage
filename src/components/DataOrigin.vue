@@ -81,6 +81,10 @@ import parameterItem from './ParameterItem';
                     return []
                 }
             },
+            isDown:{
+                type:Boolean,
+                default:false
+            }
         },
         data:function(){
             return {
@@ -225,8 +229,19 @@ import parameterItem from './ParameterItem';
            source(){
                 this.parameter = this.source.parameter;
                 this.response = this.source.response;
-           }
-        }
+           },
+            isDown(){
+                let _this = this;
+                let promise = Promise.resolve();
+                if(this.isDown){
+                    promise.then(()=>{
+                        _this.changeOpacity();
+                    }).then(()=>{
+                        _this.$emit('initIsDown');
+                    });
+                }
+            }
+        },
     }
 </script>
 
