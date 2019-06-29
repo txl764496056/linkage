@@ -14,6 +14,7 @@
                 :param="item" 
                 :write_index='write_index'
                 :iconLink_state="iconLink_state"
+                :selectedField="selectedField"
                 v-on:changeFeildLight="changeFeildLight"
                 :feild_color="feild_color"></parameter-item>
             </header-body>
@@ -30,7 +31,7 @@
                     :key="item.name"
                     @click="feildActive(index,item.name)"  
                     :class="{'light':feild_color[write_index],
-                    'selected':(feild_active.name==item.name)&&(feild_active.upper_level==source.data_origin_id)&&feild_color[write_index]}">{{item.name}}</span>
+                    'selected':(selectedField.name==item.name)&&(selectedField.id==source.data_origin_id)&&feild_color[write_index]}">{{item.name}}</span>
                 </div>
             </header-body>
         </div>
@@ -84,6 +85,12 @@ import parameterItem from './ParameterItem';
             isDown:{
                 type:Boolean,
                 default:false
+            },
+            selectedField:{
+                type:Object,
+                default(){
+                    return {}
+                }
             }
         },
         data:function(){
@@ -201,6 +208,9 @@ import parameterItem from './ParameterItem';
                //选中字段所在组件的序列号    
                this.$set(this.all_param_feild[num],'upper_level',this.source.data_origin_id);
                this.$set(this.all_param_feild[num],'input_origin','');
+                
+               this.$set(this.selectedField,'id',this.source.data_origin_id);
+               this.$set(this.selectedField,'name',value);
            },
            /**
             * 高亮“关联”图标在iconLink_state中的序列号
@@ -215,11 +225,6 @@ import parameterItem from './ParameterItem';
                   }
                });
                return num;
-           }
-        },
-        computed:{
-           feild_active(){
-               return this.$store.state.feild_active;
            }
         },
         watch:{

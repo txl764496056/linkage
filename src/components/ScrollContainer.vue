@@ -11,6 +11,7 @@
             :write_index="originIndex(index)"
             :index="index"
             :isDown="isDown"
+            :selectedField="$attrs.selectedField"
             v-on:initIsDown='initIsDown'
             @mouseover.native="overItem(index)"
             v-on:moveOrigin="moveOrigin"
@@ -46,6 +47,12 @@ import dataOrigin from '../components/DataOrigin'
                     return [];
                 }
             },
+            // selectedField:{
+            //     type:Object,
+            //     default(){
+            //         return {}
+            //     }
+            // }
         },
         data:function(){
             return {
@@ -69,7 +76,7 @@ import dataOrigin from '../components/DataOrigin'
                 scrollIntervalId:-1, // 滚动动画计时器id
                 scrollx_max:0, //横向滚动的最大距离
                 hoverStatus:[], //所有data-origin的悬停状态记录，true:鼠标悬停在当前元素，false：鼠标未悬停在当前元素
-                hoverCurr:-1 //鼠标悬停的data-origin的序列号
+                hoverCurr:-1 ,//鼠标悬停的data-origin的序列号
             }
         },
         mounted(){

@@ -45,6 +45,12 @@ import filterBox from './FilterBox';
                     return [];
                 }
             },
+            selectedField:{
+                type:Object,
+                default(){
+                    return {}
+                }
+            }
         },
         components:{
             filterBox
@@ -108,9 +114,18 @@ import filterBox from './FilterBox';
                 }
             },
             /**
+             * 清空已选择的feild高亮
+             */
+            clearSelectedField(){
+                this.$set(this.selectedField,'id',-1);
+                this.$set(this.selectedField,'name',"");
+            },
+            /**
              * 切换手型与挂链图标
              */
             switchStatus(){
+
+                this.clearSelectedField()
 
                 // 切换图标
                 this.iconLink = !this.iconLink;
@@ -122,6 +137,10 @@ import filterBox from './FilterBox';
                     this.setFeildLight();
                     this.showLinkMsg = true;//显示origin关联板块
                     this.$emit('changeFeildLight');
+                    if(this.param.upper_level>=0){
+                        this.$set(this.selectedField,'id',this.param.upper_level);
+                        this.$set(this.selectedField,'name',this.param.select_origin);
+                    }
                 // 手型-切换后
                 }else{
                     this.cancelFeildLight();
@@ -184,7 +203,13 @@ import filterBox from './FilterBox';
                 this.iconLink = this.iconLink_state[this.param.para_index];
                 // this.setFeildLight(); 
 
-            }
+            },
+            // param(){
+            //    if(this.param.upper_level>=0){
+            //         this.$set(this.selectedField,'id',this.param.upper_level);
+            //         this.$set(this.selectedField,'name',this.param.select_origin);
+            //     }
+            // }
         }
     }
 </script>
