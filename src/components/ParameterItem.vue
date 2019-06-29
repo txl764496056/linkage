@@ -201,15 +201,7 @@ import filterBox from './FilterBox';
         watch:{
             iconLink_state(){
                 this.iconLink = this.iconLink_state[this.param.para_index];
-                // this.setFeildLight(); 
-
             },
-            // param(){
-            //    if(this.param.upper_level>=0){
-            //         this.$set(this.selectedField,'id',this.param.upper_level);
-            //         this.$set(this.selectedField,'name',this.param.select_origin);
-            //     }
-            // }
         }
     }
 </script>

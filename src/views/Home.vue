@@ -11,14 +11,12 @@
     <scroll-container 
     :title="'write'" 
     :state_msg='state_msg'
-    :selectedField="selectedField"
     :source_list="write_list">
     </scroll-container>
 
     <scroll-container 
     :title="'read'" 
     :state_msg="state_msg"
-    :selectedField="selectedField"
     :source_list="read_list">
     </scroll-container>
     
@@ -45,13 +43,13 @@ export default {
          iconLink_state:[], //所有手型/关联图标状态。true：显示关联图标，false：显示手型图标
          all_param_feild:[],//所有参数信息，每个字段，序列号与图标状态一一对应
          feild_color:[] ,//返回字段高亮颜色判断
+         selectedField:{ //已选中字段
+            id:-1,
+            name:""
+        }
       },
       num:0, //字段值加序列号(parameter下的字段)
       data_origin_id:0, //DataOrigin 唯一标识符，也是数量统计，每次页面刷新则重新排序
-      selectedField:{ //已选中字段
-                    id:-1,
-                    name:""
-                }
     }
   },
   mounted(){

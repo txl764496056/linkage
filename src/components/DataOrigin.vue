@@ -8,6 +8,7 @@
             <i @click="deleteOrigin()" class="iconfont icon-remove remove"></i>
         </div>
         <div class="dr-container">
+            <!-- v-on:changeFeildLight="changeFeildLight" -->
             <header-body v-if="parameter" :title="'Parameter Information'" class="hd-item">
                 <parameter-item class="pi-item" 
                 v-for="(item) in parameter" :key="item.name" 
@@ -15,7 +16,7 @@
                 :write_index='write_index'
                 :iconLink_state="iconLink_state"
                 :selectedField="selectedField"
-                v-on:changeFeildLight="changeFeildLight"
+                
                 :feild_color="feild_color"></parameter-item>
             </header-body>
             <header-body 
@@ -174,24 +175,6 @@ import parameterItem from './ParameterItem';
                 })                
             },
             /**
-             * 子组件点击切换手型/关联图标时，查找并显示 高亮字段
-             */
-            changeFeildLight(){
-                let index = this.iconLinkLightIndex();
-                let upper_level = this.all_param_feild[index].upper_level;
-                let name = this.all_param_feild[index].select_origin;
-                this.setFeildLight(name,upper_level);
-            },
-            /**
-             * 设置 高亮返回字段
-             */
-            setFeildLight(name,upper_level){
-                this.$store.commit('setFeildActive', {
-                    name:name || "",
-                    upper_level:(upper_level<0 ? -1:upper_level)
-                });
-            },
-            /**
              * 返回字段选中状态
              */
            feildActive(index,value){
@@ -200,8 +183,6 @@ import parameterItem from './ParameterItem';
                if( !this.feild_color[this.write_index] ){return;}
 
                let num = this.iconLinkLightIndex(); 
-
-               this.setFeildLight(value,this.source.data_origin_id);
 
                //找出对应的参数信息字段对象,并添加新的属性
                this.$set(this.all_param_feild[num],'select_origin',value);

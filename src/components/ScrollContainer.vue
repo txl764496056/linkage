@@ -11,7 +11,6 @@
             :write_index="originIndex(index)"
             :index="index"
             :isDown="isDown"
-            :selectedField="$attrs.selectedField"
             v-on:initIsDown='initIsDown'
             @mouseover.native="overItem(index)"
             v-on:moveOrigin="moveOrigin"
@@ -47,12 +46,6 @@ import dataOrigin from '../components/DataOrigin'
                     return [];
                 }
             },
-            // selectedField:{
-            //     type:Object,
-            //     default(){
-            //         return {}
-            //     }
-            // }
         },
         data:function(){
             return {
